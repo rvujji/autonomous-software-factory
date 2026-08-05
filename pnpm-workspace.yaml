@@ -1,0 +1,9 @@
+packages:
+  - core
+  - shared
+  - engine-packs/*
+  - execution-backends/*
+  - products/*
+
+onlyBuiltDependencies:
+  - esbuild

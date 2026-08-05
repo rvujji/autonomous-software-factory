@@ -1,5 +1,5 @@
-import { Identifier } from "./identifier";
-import { Timestamp } from "./timestamp";
+import { Identifier } from "./identifier.js";
+import { Timestamp } from "./timestamp.js";
 
 export interface Metadata {
 

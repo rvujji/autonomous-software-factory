@@ -1,5 +1,5 @@
-import { Identifier } from "./identifier";
-import { Version } from "./version";
+import { Identifier } from "./identifier.js";
+import { Version } from "./version.js";
 
 export interface Reference {
 

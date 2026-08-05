@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+coverage/
+*.tsbuildinfo
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+
+# Runtime
+tmp/
+temp/
+
+# pnpm
+.pnpm-store/
+
+# Testing
+.nyc_output/
+
+# Generated
+*.tgz

@@ -1,4 +1,4 @@
-import { ErrorInfo } from "./error";
+import { ErrorInfo } from "./error.js";
 
 export interface Result<T> {
 
