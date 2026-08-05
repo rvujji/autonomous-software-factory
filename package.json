@@ -3,9 +3,10 @@
   "private": true,
   "packageManager": "pnpm@10.14.0",
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "tsc -b",
     "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
+    "clean": "pnpm -r clean",
+    "lint": "eslint .",
     "format": "prettier --write ."
   },
   "devDependencies": {

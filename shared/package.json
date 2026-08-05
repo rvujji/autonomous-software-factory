@@ -10,7 +10,8 @@
   "types": "dist/index.d.ts",
 
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "vitest"
+    "build": "tsc -b",
+    "test": "vitest run --passWithNoTests",
+    "clean": "rm -rf dist *.tsbuildinfo"
   }
 }
