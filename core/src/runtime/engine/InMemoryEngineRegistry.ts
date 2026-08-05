@@ -1,12 +1,6 @@
 import { Engine } from "../../../../shared/src/engine/index.js";
-
 import { EngineRegistry } from "./EngineRegistry.js";
 
-/**
- * In-memory implementation of EngineRegistry.
- *
- * Intended for unit tests and early runtime development.
- */
 export class InMemoryEngineRegistry implements EngineRegistry {
 
     private readonly engines = new Map<string, Engine>();
@@ -23,10 +17,7 @@ export class InMemoryEngineRegistry implements EngineRegistry {
             );
         }
 
-        this.engines.set(
-            name,
-            engine,
-        );
+        this.engines.set(name, engine);
 
     }
 

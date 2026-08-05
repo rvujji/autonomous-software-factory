@@ -17,7 +17,9 @@ export class FakeEngine implements Engine {
         type: "GENERATOR",
 
         metadata: {
+
             version: "1.0.0",
+
         },
 
     };

@@ -1,6 +1,6 @@
 import { Artifact } from "../artifact/artifact.js";
 
-export interface PipelineResult {
+export interface PipelineRequest {
 
     readonly artifacts: readonly Artifact[];
 
