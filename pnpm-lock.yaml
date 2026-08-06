@@ -45,6 +45,12 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
+  engine-packs/engineering:
+    dependencies:
+      '@engineering/shared':
+        specifier: workspace:*
+        version: link:../../shared
+
   shared: {}
 
 packages:

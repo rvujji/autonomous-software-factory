@@ -1,17 +1,20 @@
 {
   "name": "@engineering/shared",
-
   "version": "1.0.0",
-
+  "private": true,
   "type": "module",
 
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
 
-  "types": "dist/index.d.ts",
-
-  "scripts": {
-    "build": "tsc -b",
-    "test": "vitest run --passWithNoTests",
-    "clean": "rm -rf dist *.tsbuildinfo"
+  "exports": {
+    ".": "./dist/index.js",
+    "./artifact": "./dist/artifact/index.js",
+    "./engine": "./dist/engine/index.js",
+    "./execution": "./dist/execution/index.js",
+    "./foundation": "./dist/foundation/index.js",
+    "./pipeline": "./dist/pipeline/index.js",
+    "./platform": "./dist/platform/index.js"
   }
+
 }

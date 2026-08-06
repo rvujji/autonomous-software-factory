@@ -2,11 +2,9 @@
   "files": [],
 
   "references": [
-    {
-      "path": "./shared"
-    },
-    {
-      "path": "./core"
-    }
+    {"path": "./shared"},
+    {"path": "./core"},
+    {"path": "./engine-packs/engineering" },
+    {"path": "./platform"}
   ]
 }

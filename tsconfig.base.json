@@ -26,6 +26,24 @@
 
     "resolveJsonModule": true,
 
-    "types": ["node"]
+    "types": ["node"],
+
+    "paths": {
+      "@engineering/shared": ["./shared/src/index.ts"],
+      "@engineering/shared/*": ["./shared/src/*"],
+
+      "@engineering/core": ["./core/src/index.ts"],
+      "@engineering/core/*": ["./core/src/*"],
+
+      "@engineering/platform": ["./platform/src/index.ts"],
+      "@engineering/platform/*": ["./platform/src/*"],
+
+      "@engineering/engineering-pack": [
+        "./engine-packs/engineering/src/index.ts"
+      ],
+      "@engineering/engineering-pack/*": [
+        "./engine-packs/engineering/src/*"
+      ]
+    }
   }
 }

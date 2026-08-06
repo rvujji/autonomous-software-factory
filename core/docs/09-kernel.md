@@ -461,3 +461,11 @@ The kernel is considered stable when:
 Future platform capabilities should extend the kernel through new Engines, Pipelines, Repositories, Stores, and Runtime services rather than modifying the kernel itself.
 
 The Engineering Platform Kernel is the foundation upon which every future product is built.
+
+# Composition Rule
+
+The kernel never composes itself.
+
+Engine Packs never compose themselves.
+
+Applications are responsible for composing runtimes, repositories, registries, stores, and engine packs into a working platform.
