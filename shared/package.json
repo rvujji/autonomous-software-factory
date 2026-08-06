@@ -1,4 +1,5 @@
 {
+  
   "name": "@engineering/shared",
   "version": "1.0.0",
   "private": true,
@@ -8,13 +9,45 @@
   "types": "./dist/index.d.ts",
 
   "exports": {
-    ".": "./dist/index.js",
-    "./artifact": "./dist/artifact/index.js",
-    "./engine": "./dist/engine/index.js",
-    "./execution": "./dist/execution/index.js",
-    "./foundation": "./dist/foundation/index.js",
-    "./pipeline": "./dist/pipeline/index.js",
-    "./platform": "./dist/platform/index.js"
-  }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
 
+    "./artifact": {
+      "types": "./dist/artifact/index.d.ts",
+      "default": "./dist/artifact/index.js"
+    },
+
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "default": "./dist/engine/index.js"
+    },
+
+    "./execution": {
+      "types": "./dist/execution/index.d.ts",
+      "default": "./dist/execution/index.js"
+    },
+
+    "./foundation": {
+      "types": "./dist/foundation/index.d.ts",
+      "default": "./dist/foundation/index.js"
+    },
+
+    "./pipeline": {
+      "types": "./dist/pipeline/index.d.ts",
+      "default": "./dist/pipeline/index.js"
+    },
+
+    "./platform": {
+      "types": "./dist/platform/index.d.ts",
+      "default": "./dist/platform/index.js"
+    }
+  },
+
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run --passWithNoTests",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  }
 }

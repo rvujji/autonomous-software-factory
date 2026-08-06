@@ -1,4 +1,4 @@
-import { Identifier } from "../../../../shared/src/foundation/index.js";
+import { Identifier } from "@engineering/shared/foundation";
 
 export interface IdentifierGenerator {
 

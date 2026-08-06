@@ -3,7 +3,7 @@ import {
     Artifact,
     ArtifactState,
 
-} from "../../../../shared/src/artifact/index.js";
+} from "@engineering/shared/artifact";
 
 import {
 
@@ -14,7 +14,7 @@ import {
     EngineSpecification,
     EngineType,
 
-} from "../../../../shared/src/engine/index.js";
+} from "@engineering/shared/engine";
 
 export class ParseRequirementsEngine
 implements Engine {

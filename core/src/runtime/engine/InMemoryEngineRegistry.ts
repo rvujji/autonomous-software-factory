@@ -1,4 +1,4 @@
-import { Engine } from "../../../../shared/src/engine/index.js";
+import { Engine } from "@engineering/shared/engine";
 import { EngineRegistry } from "./EngineRegistry.js";
 
 export class InMemoryEngineRegistry implements EngineRegistry {

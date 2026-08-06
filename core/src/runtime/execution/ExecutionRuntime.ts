@@ -1,10 +1,10 @@
 import {
     Execution,
     StartExecutionRequest,
-} from "../../../../shared/src/execution/index.js";
+} from "@engineering/shared/execution";
 
 import { Clock } from "../foundation/Clock.js";
-import { IdentifierGenerator } from "../../../../shared/src/foundation/identifier-generator.js";
+import { IdentifierGenerator } from "@engineering/shared/foundation";
 
 import { PipelineRuntime } from "../pipeline/PipelineRuntime.js";
 import { ExecutionRepository } from "./ExecutionRepository.js";

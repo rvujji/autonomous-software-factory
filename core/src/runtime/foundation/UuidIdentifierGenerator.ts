@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 
-import { Identifier } from "../../../../shared/src/foundation/index.js";
+import { Identifier } from "@engineering/shared/foundation";
 import { IdentifierGenerator } from "./IdentifierGenerator.js";
 
 export class UuidIdentifierGenerator implements IdentifierGenerator {

@@ -3,11 +3,11 @@ import {
     ArtifactState,
     ArtifactStore,
     CreateArtifactRequest
-} from "../../../../shared/src/artifact/index.js";
+} from "@engineering/shared/artifact";
 
 import {
     Identifier
-} from "../../../../shared/src/foundation/index.js";
+} from "@engineering/shared/foundation";
 
 import { Clock } from "../foundation/Clock.js";
 import { IdentifierGenerator } from "../foundation/IdentifierGenerator.js";

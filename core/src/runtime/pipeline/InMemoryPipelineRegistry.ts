@@ -1,4 +1,4 @@
-import { Pipeline } from "../../../../shared/src/pipeline/index.js";
+import { Pipeline } from "@engineering/shared/pipeline";
 import { PipelineRegistry } from "./PipelineRegistry.js";
 
 export class InMemoryPipelineRegistry implements PipelineRegistry {

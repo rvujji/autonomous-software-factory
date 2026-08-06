@@ -1,6 +1,7 @@
 packages:
   - core
   - shared
+  - platform
   - engine-packs/*
   - execution-backends/*
   - products/*

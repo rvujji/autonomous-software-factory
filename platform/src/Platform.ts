@@ -1,7 +1,7 @@
-import { ArtifactRuntime } from "../../core/src/runtime/artifact/ArtifactRuntime.js";
-import { EngineRuntime } from "../../core/src/runtime/engine/EngineRuntime.js";
-import { PipelineRuntime } from "../../core/src/runtime/pipeline/PipelineRuntime.js";
-import { ExecutionRuntime } from "../../core/src/runtime/execution/ExecutionRuntime.js";
+import { ArtifactRuntime } from "@engineering/core/artifact";
+import { EngineRuntime } from "@engineering/core/engine";
+import { PipelineRuntime } from "@engineering/core/pipeline";
+import { ExecutionRuntime } from "@engineering/core/execution";
 
 export interface Platform {
 

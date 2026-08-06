@@ -3,7 +3,7 @@ import {
     EngineContext,
     EngineRequest,
     EngineResult,
-} from "../../../../shared/src/engine/index.js";
+} from "@engineering/shared/engine";
 
 import { EngineRegistry } from "./EngineRegistry.js";
 

@@ -1,4 +1,4 @@
-import { Timestamp } from "../../../../shared/src/foundation/timestamp.js";
+import { Timestamp } from "@engineering/shared/foundation";
 
 export interface Clock {
 

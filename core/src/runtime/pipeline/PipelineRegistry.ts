@@ -1,4 +1,4 @@
-import { Pipeline } from "../../../../shared/src/pipeline/index.js";
+import { Pipeline } from "@engineering/shared/pipeline";
 
 export interface PipelineRegistry {
 

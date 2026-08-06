@@ -7,3 +7,4 @@ export * from "./state.js";
 export * from "./factory.js";
 export * from "./result.js";
 export * from "./error.js";
+export * from "./identifier-generator.js";

@@ -1,7 +1,7 @@
 import {
     Execution,
     ExecutionState,
-} from "../../../../shared/src/execution/index.js";
+} from "@engineering/shared/execution";
 
 import { ExecutionRepository } from "./ExecutionRepository.js";
 

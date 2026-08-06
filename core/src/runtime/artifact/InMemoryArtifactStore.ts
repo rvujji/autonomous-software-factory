@@ -4,11 +4,11 @@ import {
     ArtifactSort,
     ArtifactFilter,
     ArtifactStore,
-} from "../../../../shared/src/artifact/index.js";
+} from "@engineering/shared/artifact";
 
 import {
     Identifier,
-} from "../../../../shared/src/foundation/index.js";
+} from "@engineering/shared/foundation";
 
 /**
  * Simple in-memory implementation of ArtifactStore.

@@ -1,4 +1,4 @@
-import { Engine } from "../../../../shared/src/engine/index.js";
+import { Engine } from "@engineering/shared/engine";
 
 export interface EngineRegistry {
 

@@ -3,7 +3,7 @@ import {
     PipelineContext,
     PipelineRequest,
     PipelineResult,
-} from "../../../../shared/src/pipeline/index.js";
+} from "@engineering/shared/pipeline";
 
 import { PipelineRegistry } from "./PipelineRegistry.js";
 

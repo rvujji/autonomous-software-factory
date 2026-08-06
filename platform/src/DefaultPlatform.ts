@@ -1,16 +1,16 @@
-import { ArtifactRuntime } from "../../core/src/runtime/artifact/ArtifactRuntime.js";
-import { EngineRuntime } from "../../core/src/runtime/engine/EngineRuntime.js";
-import { ExecutionRuntime } from "../../core/src/runtime/execution/ExecutionRuntime.js";
-import { PipelineRuntime } from "../../core/src/runtime/pipeline/PipelineRuntime.js";
-import { Platform } from "./index.js";
-import { SystemClock } from "../../core/src/runtime/foundation/SystemClock.js";
-import { UuidIdentifierGenerator } from "../../core/src/runtime/foundation/UuidIdentifierGenerator.js";
-import { InMemoryArtifactStore } from "../../core/src/runtime/artifact/InMemoryArtifactStore.js";
-import { InMemoryExecutionRepository } from "../../core/src/runtime/execution/InMemoryExecutionRepository.js";
-import { InMemoryEngineRegistry } from "../../core/src/runtime/engine/InMemoryEngineRegistry.js";
-import { InMemoryPipelineRegistry } from "../../core/src/runtime/pipeline/InMemoryPipelineRegistry.js";
-import { EngineeringEnginePack } from "../../engine-packs/engineering/src/EngineeringEnginePack.js";
-import { EnginePack } from "@engineering/shared/platform/index.js";
+import { ArtifactRuntime } from "@engineering/core/artifact";
+import { EngineRuntime } from "@engineering/core/engine";
+import { ExecutionRuntime } from "@engineering/core/execution";
+import { PipelineRuntime } from "@engineering/core/pipeline";
+import { Platform } from "./Platform.js";
+import { SystemClock } from "@engineering/core/foundation";
+import { UuidIdentifierGenerator } from "@engineering/core/foundation";
+import { InMemoryArtifactStore } from "@engineering/core/artifact";
+import { InMemoryExecutionRepository } from "@engineering/core/execution";
+import { InMemoryEngineRegistry } from "@engineering/core/engine";
+import { InMemoryPipelineRegistry } from "@engineering/core/pipeline";
+import { EngineeringEnginePack } from "@engineering/engine-pack";
+import { EnginePack } from "@engineering/shared/platform";
 
 export class DefaultPlatform
 implements Platform {

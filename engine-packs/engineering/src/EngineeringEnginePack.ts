@@ -1,6 +1,6 @@
-import { Engine } from "../../../shared/src/engine/index.js";
-import { Pipeline } from "../../../shared/src/pipeline/index.js";
-import { EnginePack } from "../../../shared/src/platform/EnginePack.js";
+import { Engine } from "@engineering/shared/engine";
+import { Pipeline } from "@engineering/shared/pipeline";
+import { EnginePack } from "@engineering/shared/platform";
 
 import { ParseRequirementsEngine } from "./requirements/ParseRequirementsEngine.js";
 
