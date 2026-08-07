@@ -1,8 +1,10 @@
 import {
+
     Backend,
     BackendConfiguration,
     BackendResult,
     BackendTask,
+
 } from "@engineering/backend-shared";
 
 import { CliProcess } from "./CliProcess.js";
@@ -15,12 +17,17 @@ implements Backend {
     abstract readonly version: string;
 
     protected constructor(
+
         protected readonly process: CliProcess,
+
     ) {}
 
     abstract execute(
+
         task: BackendTask,
+
         configuration?: BackendConfiguration,
+
     ): Promise<BackendResult>;
 
 }
