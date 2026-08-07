@@ -1,0 +1,28 @@
+{
+  "name": "@engineering/backend-opencode",
+
+  "version": "1.0.0",
+
+  "private": true,
+
+  "type": "module",
+
+  "main": "dist/index.js",
+
+  "types": "dist/index.d.ts",
+
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run --passWithNoTests",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+
+  "dependencies": {
+
+    "@engineering/backend-shared": "workspace:*",
+
+    "@engineering/backend-cli": "workspace:*"
+
+  }
+
+}

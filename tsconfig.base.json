@@ -28,6 +28,8 @@
 
     "types": ["node"],
 
+    "baseUrl": ".",
+
     "paths": {
       "@engineering/shared": ["./shared/src/index.ts"],
       "@engineering/shared/*": ["./shared/src/*"],
@@ -38,12 +40,19 @@
       "@engineering/platform": ["./platform/src/index.ts"],
       "@engineering/platform/*": ["./platform/src/*"],
 
-      "@engineering/engineering-pack": [
-        "./engine-packs/engineering/src/index.ts"
-      ],
-      "@engineering/engineering-pack/*": [
-        "./engine-packs/engineering/src/*"
-      ]
+      "@engineering/engineering-pack": ["./engine-packs/engineering/src/index.ts"],
+      "@engineering/engineering-pack/*": ["./engine-packs/engineering/src/*"],
+
+      "@engineering/backends/cli": ["./backends/cli/src/index.ts"],
+      "@engineering/backends/cli/*": ["./backends/cli/src/*"],
+
+      "@engineering/backends/opencode": ["./backends/opencode/src/index.ts"],
+      "@engineering/backends/opencode/*": ["./backends/opencode/src/*"],
+
+      "@engineering/backends/shared": ["./backends/shared/src/index.ts"],
+      "@engineering/backends/shared/*": ["./backends/shared/src/*"],
+
+      
     }
   }
 }

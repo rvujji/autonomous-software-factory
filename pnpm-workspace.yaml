@@ -3,7 +3,7 @@ packages:
   - shared
   - platform
   - engine-packs/*
-  - execution-backends/*
+  - backends/*
   - products/*
 
 onlyBuiltDependencies:

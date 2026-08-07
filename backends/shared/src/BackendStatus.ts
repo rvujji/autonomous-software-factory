@@ -1,0 +1,17 @@
+export enum BackendStatus {
+
+    QUEUED = "QUEUED",
+
+    RUNNING = "RUNNING",
+
+    SUCCEEDED = "SUCCEEDED",
+
+    FAILED = "FAILED",
+
+    CANCELLED = "CANCELLED",
+
+    TIMED_OUT = "TIMED_OUT",
+
+    PARTIALLY_SUCCEEDED = "PARTIALLY_SUCCEEDED",
+
+}

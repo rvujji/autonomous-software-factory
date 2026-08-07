@@ -5,6 +5,9 @@
     {"path": "./shared"},
     {"path": "./core"},
     {"path": "./engine-packs/engineering" },
-    {"path": "./platform"}
+    {"path": "./platform"},
+    {"path": "./backends/shared"},
+    {"path": "./backends/cli"},
+    {"path": "./backends/opencode"}
   ]
 }
