@@ -8,13 +8,15 @@
   "types": "dist/index.d.ts",
 
   "dependencies": {
-    "@engineering/shared": "workspace:*"
+    "@engineering/shared": "workspace:*",
+    "@engineering/backend-shared": "workspace:*"
   },
 
   "exports": {
     ".": "./dist/index.js",
     "./runtime": "./dist/runtime/index.js",
     "./artifact": "./dist/runtime/artifact/index.js",
+    "./backend": "./dist/runtime/backend/index.js",
     "./engine": "./dist/runtime/engine/index.js",
     "./execution": "./dist/runtime/execution/index.js",
     "./foundation": "./dist/runtime/foundation/index.js",

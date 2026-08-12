@@ -1,5 +1,7 @@
 import {
     BackendConfiguration,
+    BackendInput,
+    BackendInputSource,
     BackendTask,
 } from "@engineering/backend-shared";
 
@@ -18,27 +20,107 @@ export class OpenCodeCommandBuilder {
         configuration?: BackendConfiguration,
     ): CliCommand {
 
-        const prompt = this.buildPrompt(task);
+        const prompt =
+            this.buildPrompt(task);
+
+        const argumentsList: string[] = [
+
+            "run",
+
+            prompt,
+
+        ];
+
+        const fileInputs =
+            this.findFileInputs(
+                task.inputs,
+            );
+
+        for (
+            const fileInput
+            of fileInputs
+        ) {
+
+            argumentsList.push(
+                "--file",
+                fileInput.path,
+            );
+
+        }
+
+        const format =
+            this.configuration.format ?? "json";
+
+        argumentsList.push(
+            "--format",
+            format,
+        );
+
+        if (configuration?.workingDirectory) {
+
+            argumentsList.push(
+                "--dir",
+                configuration.workingDirectory,
+            );
+
+        }
 
         return {
 
-            executable: this.configuration.executable,
+            executable:
+                this.configuration.executable,
 
-            arguments: [
-                ...this.configuration.arguments,
-            ],
+            arguments:
+                argumentsList,
 
             ...(configuration?.workingDirectory && {
-                workingDirectory: configuration.workingDirectory,
+
+                workingDirectory:
+                    configuration.workingDirectory,
+
             }),
 
             ...(configuration?.environment && {
-                environment: configuration.environment,
+
+                environment:
+                    configuration.environment,
+
             }),
 
-            standardInput: prompt,
-
         };
+
+    }
+
+    private findFileInputs(
+        inputs: readonly BackendInput[],
+    ): readonly Extract<
+        BackendInputSource,
+        { readonly kind: "FILE" }
+    >[] {
+
+        const sources: Extract<
+            BackendInputSource,
+            { readonly kind: "FILE" }
+        >[] = [];
+
+        for (
+            const input
+            of inputs
+        ) {
+
+            if (
+                input.source.kind === "FILE"
+            ) {
+
+                sources.push(
+                    input.source,
+                );
+
+            }
+
+        }
+
+        return sources;
 
     }
 
@@ -56,9 +138,14 @@ export class OpenCodeCommandBuilder {
 
         if (task.instructions.length > 0) {
 
-            lines.push("Instructions:");
+            lines.push(
+                "Instructions:",
+            );
 
-            for (const instruction of task.instructions) {
+            for (
+                const instruction
+                of task.instructions
+            ) {
 
                 lines.push(
                     `- ${instruction}`,
@@ -70,13 +157,47 @@ export class OpenCodeCommandBuilder {
 
         }
 
-        lines.push("Inputs:");
-
-        for (const input of task.inputs) {
+        if (task.inputs.length > 0) {
 
             lines.push(
-                `- ${input.name}`,
+                "Inputs:",
             );
+
+            for (
+                const input
+                of task.inputs
+            ) {
+
+                lines.push(
+                    `- ${input.name}`,
+                );
+
+            }
+
+            lines.push("");
+
+        }
+
+        if (
+            task.expectedOutputs.length > 0
+        ) {
+
+            lines.push(
+                "Expected outputs:",
+            );
+
+            for (
+                const output
+                of task.expectedOutputs
+            ) {
+
+                lines.push(
+                    `- ${output.name}: ${output.type}`,
+                );
+
+            }
+
+            lines.push("");
 
         }
 

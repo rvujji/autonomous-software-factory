@@ -5,3 +5,4 @@ export * from "./foundation/index.js";
 export * from "./pipeline/index.js";
 export * from "./platform/index.js";
 export * from "./engineering/index.js";
+export * from "./plan/index.js";

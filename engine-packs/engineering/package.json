@@ -14,14 +14,18 @@
     "scripts": {
 
         "build": "tsc -p tsconfig.json",
-
+        "clean": "rm -rf dist *.tsbuildinfo",
         "test": "vitest run --passWithNoTests"
 
     },
 
     "dependencies": {
 
-        "@engineering/shared": "workspace:*"
+        "@engineering/shared": "workspace:*",
+        "@engineering/core": "workspace:*",
+        "@engineering/backend-shared": "workspace:*",
+        "@engineering/backend-cli": "workspace:*",
+        "@engineering/backend-opencode": "workspace:*"
 
     }
 

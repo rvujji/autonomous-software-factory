@@ -54,26 +54,55 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
-  backends/shared:
+  backends/shared: {}
+
+  cli:
     dependencies:
-      '@engineering/backend-shared':
+      '@engineering/platform':
         specifier: workspace:*
-        version: 'link:'
+        version: link:../platform
+      '@engineering/shared':
+        specifier: workspace:*
+        version: link:../shared
 
   core:
     dependencies:
+      '@engineering/backend-shared':
+        specifier: workspace:*
+        version: link:../backends/shared
       '@engineering/shared':
         specifier: workspace:*
         version: link:../shared
 
   engine-packs/engineering:
     dependencies:
+      '@engineering/backend-cli':
+        specifier: workspace:*
+        version: link:../../backends/cli
+      '@engineering/backend-opencode':
+        specifier: workspace:*
+        version: link:../../backends/opencode
+      '@engineering/backend-shared':
+        specifier: workspace:*
+        version: link:../../backends/shared
+      '@engineering/core':
+        specifier: workspace:*
+        version: link:../../core
       '@engineering/shared':
         specifier: workspace:*
         version: link:../../shared
 
   platform:
     dependencies:
+      '@engineering/backend-cli':
+        specifier: workspace:*
+        version: link:../backends/cli
+      '@engineering/backend-opencode':
+        specifier: workspace:*
+        version: link:../backends/opencode
+      '@engineering/backend-shared':
+        specifier: workspace:*
+        version: link:../backends/shared
       '@engineering/core':
         specifier: workspace:*
         version: link:../core

@@ -4,4 +4,6 @@ export interface OpenCodeConfiguration {
 
     readonly arguments: readonly string[];
 
+    readonly format?: "default" | "json";
+
 }

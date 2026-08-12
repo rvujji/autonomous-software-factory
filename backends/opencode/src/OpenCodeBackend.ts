@@ -1,4 +1,5 @@
 import {
+    BackendCapability,
     BackendConfiguration,
     BackendResult,
     BackendTask,
@@ -22,7 +23,25 @@ extends CliBackend {
 
     readonly version = "1.0.0";
 
-    private readonly commandBuilder: OpenCodeCommandBuilder;
+    readonly capabilities:
+        readonly BackendCapability[] = [
+
+            BackendCapability.FILESYSTEM,
+
+            BackendCapability.CODE_GENERATION,
+
+            BackendCapability.CODE_ANALYSIS,
+
+            BackendCapability.DOCUMENT_GENERATION,
+
+            BackendCapability.COMMAND_EXECUTION,
+
+            BackendCapability.TOOL_USE,
+
+        ];
+
+    private readonly commandBuilder:
+        OpenCodeCommandBuilder;
 
     private readonly resultMapper =
         new OpenCodeResultMapper();

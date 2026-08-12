@@ -1,59 +1,141 @@
-import { ArtifactRuntime } from "@engineering/core/artifact";
-import { EngineRuntime } from "@engineering/core/engine";
-import { ExecutionRuntime } from "@engineering/core/execution";
-import { PipelineRuntime } from "@engineering/core/pipeline";
-import { Platform } from "./Platform.js";
-import { SystemClock } from "@engineering/core/foundation";
-import { UuidIdentifierGenerator } from "@engineering/core/foundation";
-import { InMemoryArtifactStore } from "@engineering/core/artifact";
-import { InMemoryExecutionRepository } from "@engineering/core/execution";
-import { InMemoryEngineRegistry } from "@engineering/core/engine";
-import { InMemoryPipelineRegistry } from "@engineering/core/pipeline";
-import { EngineeringEnginePack } from "@engineering/engine-pack";
-import { EnginePack } from "@engineering/shared/platform";
+import {
+    BackendRuntime,
+    InMemoryBackendRegistry,
+} from "@engineering/core/backend";
+
+import {
+    ArtifactRuntime,
+    InMemoryArtifactStore,
+} from "@engineering/core/artifact";
+
+import {
+    EngineRuntime,
+    InMemoryEngineRegistry,
+} from "@engineering/core/engine";
+
+import {
+    ExecutionRuntime,
+    InMemoryExecutionRepository,
+} from "@engineering/core/execution";
+
+import {
+    PipelineRuntime,
+    InMemoryPipelineRegistry,
+} from "@engineering/core/pipeline";
+
+import {
+    SystemClock,
+    UuidIdentifierGenerator,
+} from "@engineering/core/foundation";
+
+import {
+    Backend,
+} from "@engineering/backend-shared";
+
+import {
+    EngineeringEnginePack,
+} from "@engineering/engine-pack";
+
+import {
+    OpenCodeBackend,
+} from "@engineering/backend-opencode";
+
+import {
+    NodeCliProcess,
+} from "@engineering/backend-cli";
+
+import {
+    EnginePack,
+} from "@engineering/shared/platform";
+
+import {
+    Platform,
+} from "./Platform.js";
 
 export class DefaultPlatform
 implements Platform {
 
-    readonly artifacts: ArtifactRuntime;
+    readonly artifacts:
+        ArtifactRuntime;
 
-    readonly engines: EngineRuntime;
+    readonly backends:
+        BackendRuntime;
 
-    readonly pipelines: PipelineRuntime;
+    readonly engines:
+        EngineRuntime;
 
-    readonly executions: ExecutionRuntime;
+    readonly pipelines:
+        PipelineRuntime;
+
+    readonly executions:
+        ExecutionRuntime;
 
     private constructor(
 
-        artifacts: ArtifactRuntime,
+        artifacts:
+            ArtifactRuntime,
 
-        engines: EngineRuntime,
+        backends:
+            BackendRuntime,
 
-        pipelines: PipelineRuntime,
+        engines:
+            EngineRuntime,
 
-        executions: ExecutionRuntime,
+        pipelines:
+            PipelineRuntime,
+
+        executions:
+            ExecutionRuntime,
 
     ) {
 
-        this.artifacts = artifacts;
+        this.artifacts =
+            artifacts;
 
-        this.engines = engines;
+        this.backends =
+            backends;
 
-        this.pipelines = pipelines;
+        this.engines =
+            engines;
 
-        this.executions = executions;
+        this.pipelines =
+            pipelines;
+
+        this.executions =
+            executions;
 
     }
 
     static async create(
 
-        enginePacks: readonly EnginePack[] = [
+        enginePacks?:
+            readonly EnginePack[],
 
-            new EngineeringEnginePack(),
+        backends:
+            readonly Backend[] = [
 
-        ],
+                new OpenCodeBackend(
 
-    ): Promise<Platform>{
+                    new NodeCliProcess(),
+
+                    {
+
+                        executable:
+                            "opencode",
+
+                        arguments:
+                            [],
+
+                        format:
+                            "json",
+
+                    },
+
+                ),
+
+            ],
+
+    ): Promise<Platform> {
 
         //
         // Foundation
@@ -85,13 +167,89 @@ implements Platform {
         const pipelineRegistry =
             new InMemoryPipelineRegistry();
 
+        const backendRegistry =
+            new InMemoryBackendRegistry();
+
+        //
+        // Register Backends
+        //
+
+        for (
+            const backend
+            of backends
+        ) {
+
+            await backendRegistry.register(
+                backend,
+            );
+
+        }
+
+        //
+        // Artifact Runtime
+        //
+
+        const artifactRuntime =
+            new ArtifactRuntime(
+
+                artifactStore,
+
+                identifierGenerator,
+
+                clock,
+
+            );
+
+        //
+        // Backend Runtime
+        //
+
+        const backendRuntime =
+            new BackendRuntime(
+                backendRegistry,
+            );
+
+        //
+        // Engine Runtime
+        //
+
+        const engineRuntime =
+            new EngineRuntime(
+                engineRegistry,
+            );
+
+        //
+        // Resolve Engine Packs
+        //
+
+        const resolvedEnginePacks =
+            enginePacks ?? [
+
+                new EngineeringEnginePack(
+
+                    backendRuntime,
+
+                    engineRuntime,
+
+                    artifactRuntime,
+
+                ),
+
+            ];
+
         //
         // Register Engines
         //
 
-        for (const pack of enginePacks) {
+        for (
+            const pack
+            of resolvedEnginePacks
+        ) {
 
-            for (const engine of pack.engines) {
+            for (
+                const engine
+                of pack.engines
+            ) {
 
                 await engineRegistry.register(
                     engine,
@@ -105,9 +263,15 @@ implements Platform {
         // Register Pipelines
         //
 
-        for (const pack of enginePacks) {
+        for (
+            const pack
+            of resolvedEnginePacks
+        ) {
 
-            for (const pipeline of pack.pipelines) {
+            for (
+                const pipeline
+                of pack.pipelines
+            ) {
 
                 await pipelineRegistry.register(
                     pipeline,
@@ -117,22 +281,18 @@ implements Platform {
 
         }
 
-        const artifactRuntime =
-            new ArtifactRuntime(
-                artifactStore,
-                identifierGenerator,
-                clock,
-            );
-
-        const engineRuntime =
-            new EngineRuntime(
-                engineRegistry,
-            );
+        //
+        // Pipeline Runtime
+        //
 
         const pipelineRuntime =
             new PipelineRuntime(
                 pipelineRegistry,
             );
+
+        //
+        // Execution Runtime
+        //
 
         const executionRuntime =
             new ExecutionRuntime(
@@ -150,6 +310,8 @@ implements Platform {
         return new DefaultPlatform(
 
             artifactRuntime,
+
+            backendRuntime,
 
             engineRuntime,
 

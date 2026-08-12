@@ -24,6 +24,11 @@
       "default": "./dist/engine/index.js"
     },
 
+    "./engineering": {
+      "types": "./dist/engineering/index.d.ts",
+      "default": "./dist/engineering/index.js"
+    },
+
     "./execution": {
       "types": "./dist/execution/index.d.ts",
       "default": "./dist/execution/index.js"
@@ -42,7 +47,13 @@
     "./platform": {
       "types": "./dist/platform/index.d.ts",
       "default": "./dist/platform/index.js"
+    },
+
+    "./plan": {
+      "types": "./dist/plan/index.d.ts",
+      "default": "./dist/plan/index.js"
     }
+
   },
 
   "scripts": {

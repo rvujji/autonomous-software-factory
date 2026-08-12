@@ -5,6 +5,7 @@ packages:
   - engine-packs/*
   - backends/*
   - products/*
+  - cli
 
 onlyBuiltDependencies:
   - esbuild

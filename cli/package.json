@@ -1,0 +1,24 @@
+{
+    "name": "@engineering/cli",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+
+    "bin": {
+        "engineering": "dist/index.js"
+    },
+
+    "scripts": {
+        "build": "tsc -b",
+        "test": "vitest run --passWithNoTests",
+        "clean": "rm -rf dist *.tsbuildinfo"
+    },
+
+    "dependencies": {
+        "@engineering/platform": "workspace:*",
+        "@engineering/shared": "workspace:*"
+    }
+}

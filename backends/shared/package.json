@@ -11,16 +11,13 @@
 
   "types": "dist/index.d.ts",
 
+  "exports": {
+    ".": "./dist/index.js"
+  },
+
   "scripts": {
     "build": "tsc -b",
     "test": "vitest run --passWithNoTests",
     "clean": "rm -rf dist *.tsbuildinfo"
-  },
-
-  "dependencies": {
-
-    "@engineering/backend-shared": "workspace:*"
-
   }
-
 }

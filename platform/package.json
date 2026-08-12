@@ -19,6 +19,9 @@
 
     "dependencies": {
         "@engineering/shared": "workspace:*",
+        "@engineering/backend-shared": "workspace:*",
+        "@engineering/backend-cli": "workspace:*",
+        "@engineering/backend-opencode": "workspace:*",
         "@engineering/core": "workspace:*",
         "@engineering/engine-pack": "workspace:*"
     }

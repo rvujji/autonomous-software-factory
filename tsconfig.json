@@ -3,11 +3,12 @@
 
   "references": [
     {"path": "./shared"},
+    {"path": "./backends/shared"},
     {"path": "./core"},
     {"path": "./engine-packs/engineering" },
     {"path": "./platform"},
-    {"path": "./backends/shared"},
     {"path": "./backends/cli"},
-    {"path": "./backends/opencode"}
+    {"path": "./backends/opencode"},
+    {"path": "./cli" }
   ]
 }

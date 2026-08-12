@@ -1,5 +1,6 @@
 import {
     Backend,
+    BackendCapability,
     BackendConfiguration,
     BackendResult,
     BackendTask,
@@ -13,6 +14,9 @@ implements Backend {
     abstract readonly name: string;
 
     abstract readonly version: string;
+
+    abstract readonly capabilities:
+        readonly BackendCapability[];
 
     protected constructor(
         protected readonly process: CliProcess,
