@@ -25,6 +25,7 @@ import {
 import {
     EngineeringEnginePack,
 } from "../../src/EngineeringEnginePack.js";
+
 import {
     ArtifactRuntime,
     InMemoryArtifactStore,
@@ -34,14 +35,18 @@ import {
     SystemClock,
     UuidIdentifierGenerator,
 } from "@engineering/core/foundation";
-import { ArtifactState } from "@engineering/shared/artifact";
+
+import {
+    ArtifactState,
+} from "@engineering/shared/artifact";
+
 
 describe(
     "Requirements Engineering and Planning E2E",
     () => {
 
         it(
-            "parses, validates, and plans a real requirements document through OpenCode",
+            "parses, validates, plans, and builds an execution graph through OpenCode",
             async () => {
 
                 const backendRegistry =
@@ -58,7 +63,8 @@ describe(
                             executable:
                                 "opencode",
 
-                            arguments: [],
+                            arguments:
+                                [],
 
                             format:
                                 "json",
@@ -81,6 +87,7 @@ describe(
                     new EngineRuntime(
                         engineRegistry,
                     );
+
                 const artifactRuntime =
                     new ArtifactRuntime(
 
@@ -91,12 +98,14 @@ describe(
                         new SystemClock(),
 
                     );
+
                 const pack =
                     new EngineeringEnginePack(
 
                         backendRuntime,
 
                         engineRuntime,
+
                         artifactRuntime,
 
                     );
@@ -152,23 +161,25 @@ describe(
 
                                     },
 
-                                    parents: [],
+                                    parents:
+                                        [],
 
-                                    payload: `# Engineering Platform
+                                    payload:
+                                        `# Engineering Platform
 
-                                    The platform must allow users to create engineering projects.
+The platform must allow users to create engineering projects.
 
-                                    Users must be able to authenticate securely.
+Users must be able to authenticate securely.
 
-                                    The system must maintain project requirements.
+The system must maintain project requirements.
 
-                                    The platform should provide reliable execution of engineering workflows.
+The platform should provide reliable execution of engineering workflows.
 
-                                    The system must preserve traceability between engineering artifacts.
+The system must preserve traceability between engineering artifacts.
 
-                                    The platform must support modular backend execution.
+The platform must support modular backend execution.
 
-                                    Security requirements must be enforced for authenticated operations.
+Security requirements must be enforced for authenticated operations.
 `,
 
                                 },
@@ -178,6 +189,10 @@ describe(
                         },
 
                     );
+
+                //
+                // Final pipeline output
+                //
 
                 expect(
                     result.artifacts,
@@ -193,10 +208,14 @@ describe(
                 expect(
                     artifact?.type,
                 ).toBe(
-                    "REQUIREMENTS_PLAN",
+                    "EXECUTION_GRAPH",
                 );
 
-                const plan =
+                //
+                // Graph payload
+                //
+
+                const graph =
                     artifact?.payload as {
 
                         readonly name:
@@ -205,79 +224,133 @@ describe(
                         readonly version:
                             string;
 
-                        readonly objective:
-                            string;
+                        readonly nodes:
+                            readonly {
 
-                        readonly steps:
-                            readonly unknown[];
+                                readonly id:
+                                    string;
 
-                        readonly dependencies:
-                            readonly unknown[];
+                                readonly name:
+                                    string;
 
-                        readonly expectedArtifacts:
-                            readonly unknown[];
+                                readonly objective:
+                                    string;
 
-                        readonly constraints:
-                            readonly string[];
+                            }[];
+
+                        readonly edges:
+                            readonly {
+
+                                readonly from:
+                                    string;
+
+                                readonly to:
+                                    string;
+
+                            }[];
 
                     };
 
                 expect(
-                    plan.name,
+                    graph.name,
                 ).toBe(
                     "requirements-engineering",
                 );
 
                 expect(
-                    plan.version,
+                    graph.version,
                 ).toBeTruthy();
 
                 expect(
-                    plan.objective,
-                ).toBeTruthy();
+                    graph.nodes.length,
+                ).toBeGreaterThan(0);
 
                 expect(
-                    plan.steps,
-                ).toHaveLength(3);
+                    graph.edges.length,
+                ).toBeGreaterThan(0);
+
+                //
+                // Expected planning nodes
+                //
 
                 expect(
-                    plan.dependencies,
-                ).toHaveLength(2);
+                    graph.nodes,
+                ).toEqual(
+                    expect.arrayContaining([
+
+                        expect.objectContaining({
+
+                            id:
+                                "requirements-analysis",
+
+                        }),
+
+                        expect.objectContaining({
+
+                            id:
+                                "requirements-design",
+
+                        }),
+
+                        expect.objectContaining({
+
+                            id:
+                                "requirements-verification",
+
+                        }),
+
+                    ]),
+                );
+
+                //
+                // Expected dependency graph
+                //
 
                 expect(
-                    plan.expectedArtifacts,
-                ).toHaveLength(3);
+                    graph.edges,
+                ).toEqual(
+                    expect.arrayContaining([
+
+                        {
+
+                            from:
+                                "requirements-analysis",
+
+                            to:
+                                "requirements-design",
+
+                        },
+
+                        {
+
+                            from:
+                                "requirements-design",
+
+                            to:
+                                "requirements-verification",
+
+                        },
+
+                    ]),
+                );
+
+                //
+                // Traceability
+                //
 
                 expect(
-                    plan.steps[0],
-                ).toMatchObject({
-
-                    id:
-                        "requirements-analysis",
-
-                });
+                    artifact?.parents,
+                ).toHaveLength(1);
 
                 expect(
-                    plan.steps[1],
-                ).toMatchObject({
-
-                    id:
-                        "requirements-design",
-
-                });
-
-                expect(
-                    plan.steps[2],
-                ).toMatchObject({
-
-                    id:
-                        "requirements-verification",
-
-                });
+                    artifact?.parents[0]?.type,
+                ).toBe(
+                    "REQUIREMENTS_PLAN",
+                );
 
             },
 
-            60_000,
+            120_000,
 
         );
 

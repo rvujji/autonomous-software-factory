@@ -232,6 +232,30 @@ implements Pipeline {
             await this.persistArtifacts(
                 planResult.output.artifacts ?? [],
             );
+        console.log("[PIPELINE] graph:start",);
+        const graphResult =
+            await this.engines.execute(
+
+                "engineering.build-requirements-graph",
+
+                context,
+
+                {
+
+                    input: {
+
+                        artifacts,
+
+                    },
+
+                },
+
+            );
+        console.log("[PIPELINE] graph:done",);
+        artifacts =
+            await this.persistArtifacts(
+                graphResult.output.artifacts ?? [],
+            );
 
         return {
 

@@ -39,6 +39,9 @@ import {
 import {
     PlanRequirementsEngine,
 } from "./requirements/PlanRequirementsEngine.js";
+import {
+    BuildRequirementsGraphEngine,
+} from "./requirements/BuildRequirementsGraphEngine.js";
 
 export class EngineeringEnginePack
 implements EnginePack {
@@ -73,12 +76,12 @@ implements EnginePack {
             new ParseRequirementsEngine(
                 backends,
             ),
-
             new ValidateRequirementsEngine(),
             new RepairRequirementsEngine(
                 backends,
             ),
             new PlanRequirementsEngine(),
+            new BuildRequirementsGraphEngine(),
 
         ];
 

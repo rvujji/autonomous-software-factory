@@ -52,6 +52,11 @@
     "./plan": {
       "types": "./dist/plan/index.d.ts",
       "default": "./dist/plan/index.js"
+    },
+
+    "./graph": {
+      "types": "./dist/graph/index.d.ts",
+      "default": "./dist/graph/index.js"
     }
 
   },

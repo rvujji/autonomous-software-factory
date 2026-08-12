@@ -617,6 +617,115 @@ describe(
 
                 };
 
+                const graphEngine: Engine = {
+
+                    specification: {
+
+                        name:
+                            "engineering.build-requirements-graph",
+
+                        displayName:
+                            "Test Graph",
+
+                        type:
+                            "TRANSFORMER" as Engine["specification"]["type"],
+
+                        metadata: {
+
+                            version:
+                                "1.0.0",
+
+                        },
+
+                    },
+
+                    async execute(
+                        context: EngineContext,
+                        request: EngineRequest,
+                    ): Promise<EngineResult> {
+
+                        const artifact =
+                            request.input.artifacts[0];
+
+                        return {
+
+                            output: {
+
+                                artifacts: [
+
+                                    {
+
+                                        id:
+                                            "graph",
+
+                                        name:
+                                            "Execution Graph",
+
+                                        type:
+                                            "EXECUTION_GRAPH",
+
+                                        version:
+                                            1,
+
+                                        state:
+                                            "CREATED" as ArtifactState,
+
+                                        metadata: {
+
+                                            createdAt:
+                                                new Date(),
+
+                                        },
+
+                                        parents:
+                                            artifact
+                                                ? [
+
+                                                    {
+
+                                                        id:
+                                                            artifact.id,
+
+                                                        version:
+                                                            artifact.version,
+
+                                                        type:
+                                                            artifact.type,
+
+                                                        name:
+                                                            artifact.name,
+
+                                                    },
+
+                                                ]
+                                                : [],
+
+                                        payload: {
+
+                                            name:
+                                                "requirements-engineering",
+
+                                            version:
+                                                "1.0.0",
+
+                                            nodes: [],
+
+                                            edges: [],
+
+                                        },
+
+                                    },
+
+                                ],
+
+                            },
+
+                        };
+
+                    },
+
+                };
+
                 await registry.register(
                     parseEngine,
                 );
@@ -632,6 +741,8 @@ describe(
                 await registry.register(
                     planEngine,
                 );
+
+                await registry.register(graphEngine);
 
                 const pipeline =
                     new EngineeringPipeline(
@@ -700,6 +811,16 @@ describe(
                     result.artifacts[0]?.type,
                 ).toBe(
                     "REQUIREMENTS_PLAN",
+                );
+
+                expect(
+                    result.artifacts,
+                ).toHaveLength(1);
+
+                expect(
+                    result.artifacts[0]?.type,
+                ).toBe(
+                    "EXECUTION_GRAPH",
                 );
 
             },

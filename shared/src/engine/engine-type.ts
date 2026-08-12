@@ -4,5 +4,8 @@ export type EngineType =
     | "TRANSFORMER"
     | "VALIDATOR"
     | "REVIEWER"
+    | "REPAIR"
     | "REPAIRER"
+    | "PLANNER"
+    | "GRAPH_BUILDER"
     | "EXPORTER";
