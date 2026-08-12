@@ -91,6 +91,7 @@ implements Pipeline {
 
         let artifacts =
             request.artifacts;
+        let validatedRequirementsArtifact: Artifact | undefined;
 
         //
         // Parse
@@ -151,10 +152,11 @@ implements Pipeline {
 
                     );
                     console.log(`[PIPELINE] validate:done attempt=${attempt + 1}`,);
-                    artifacts=
+                    artifacts =
                         await this.persistArtifacts(
                             validationResult.output.artifacts ?? [],
                         );
+                    validatedRequirementsArtifact = artifacts[0];
 
                     break;
 
@@ -255,6 +257,37 @@ implements Pipeline {
         artifacts =
             await this.persistArtifacts(
                 graphResult.output.artifacts ?? [],
+            );
+        console.log("[PIPELINE] document:start");
+
+        const documentResult =
+            await this.engines.execute(
+
+                "engineering.generate-requirements-document",
+
+                context,
+
+                {
+
+                    input: {
+
+                        artifacts: [
+
+                            validatedRequirementsArtifact!,
+
+                        ],
+
+                    },
+
+                },
+
+            );
+
+        console.log("[PIPELINE] document:done");
+
+        artifacts =
+            await this.persistArtifacts(
+                documentResult.output.artifacts ?? [],
             );
 
         return {

@@ -52,7 +52,7 @@ describe(
     () => {
 
         it(
-            "repairs requirements after review failure and validates them successfully",
+            "executes the requirements pipeline through validation, planning, graph construction, and document generation",
             async () => {
 
                 const registry =
@@ -454,6 +454,114 @@ describe(
 
                 };
 
+                const documentEngine: Engine = {
+
+                    specification: {
+
+                        name:
+                            "engineering.generate-requirements-document",
+
+                        displayName:
+                            "Test Generate Requirements Document",
+
+                        type:
+                            "EXPORTER" as Engine["specification"]["type"],
+
+                        metadata: {
+
+                            version:
+                                "1.0.0",
+
+                        },
+
+                    },
+
+                    async execute(
+                        context: EngineContext,
+                        request: EngineRequest,
+                    ): Promise<EngineResult> {
+
+                        const artifact =
+                            request.input.artifacts[0];
+
+                        expect(
+                            artifact,
+                        ).toBeDefined();
+
+                        expect(
+                            artifact?.type,
+                        ).toBe(
+                            "VALIDATED_REQUIREMENTS",
+                        );
+
+                        return {
+
+                            output: {
+
+                                artifacts: [
+
+                                    {
+
+                                        id:
+                                            "requirements-document",
+
+                                        name:
+                                            "Requirements Document",
+
+                                        type:
+                                            "REQUIREMENTS_DOCUMENT",
+
+                                        version:
+                                            1,
+
+                                        state:
+                                            "CREATED" as ArtifactState,
+
+                                        metadata: {
+
+                                            createdAt:
+                                                new Date(),
+
+                                        },
+
+                                        parents:
+                                            artifact
+                                                ? [
+
+                                                    {
+
+                                                        id:
+                                                            artifact.id,
+
+                                                        version:
+                                                            artifact.version,
+
+                                                        type:
+                                                            artifact.type,
+
+                                                        name:
+                                                            artifact.name,
+
+                                                    },
+
+                                                ]
+                                                : [],
+
+                                        payload:
+                                            "# Test Project\n\n## Requirements",
+
+                                    },
+
+                                ],
+
+                            },
+
+                        };
+
+                    },
+
+                };
+
                 const planEngine: Engine = {
 
                     specification: {
@@ -738,6 +846,8 @@ describe(
                     repairEngine,
                 );
 
+                await registry.register(documentEngine,);
+
                 await registry.register(
                     planEngine,
                 );
@@ -807,20 +917,39 @@ describe(
                     result.artifacts,
                 ).toHaveLength(1);
 
+                const document =
+                    result.artifacts[0];
+
                 expect(
-                    result.artifacts[0]?.type,
+                    document,
+                ).toBeDefined();
+
+                expect(
+                    document?.type,
                 ).toBe(
-                    "REQUIREMENTS_PLAN",
+                    "REQUIREMENTS_DOCUMENT",
                 );
 
                 expect(
-                    result.artifacts,
+                    document?.name,
+                ).toBe(
+                    "Requirements Document",
+                );
+
+                expect(
+                    document?.payload,
+                ).toContain(
+                    "# Test Project",
+                );
+
+                expect(
+                    document?.parents,
                 ).toHaveLength(1);
 
                 expect(
-                    result.artifacts[0]?.type,
+                    document?.parents[0]?.type,
                 ).toBe(
-                    "EXECUTION_GRAPH",
+                    "VALIDATED_REQUIREMENTS",
                 );
 
             },

@@ -42,11 +42,11 @@ import {
 
 
 describe(
-    "Requirements Engineering and Planning E2E",
+    "Requirements Engineering and Document Generation E2E",
     () => {
 
         it(
-            "parses, validates, plans, and builds an execution graph through OpenCode",
+            "parses, validates, plans, builds the execution graph, and generates the requirements document through OpenCode",
             async () => {
 
                 const backendRegistry =
@@ -208,130 +208,40 @@ Security requirements must be enforced for authenticated operations.
                 expect(
                     artifact?.type,
                 ).toBe(
-                    "EXECUTION_GRAPH",
+                    "REQUIREMENTS_DOCUMENT",
                 );
 
-                //
-                // Graph payload
-                //
-
-                const graph =
-                    artifact?.payload as {
-
-                        readonly name:
-                            string;
-
-                        readonly version:
-                            string;
-
-                        readonly nodes:
-                            readonly {
-
-                                readonly id:
-                                    string;
-
-                                readonly name:
-                                    string;
-
-                                readonly objective:
-                                    string;
-
-                            }[];
-
-                        readonly edges:
-                            readonly {
-
-                                readonly from:
-                                    string;
-
-                                readonly to:
-                                    string;
-
-                            }[];
-
-                    };
-
                 expect(
-                    graph.name,
+                    artifact?.name,
                 ).toBe(
-                    "requirements-engineering",
-                );
-
-                expect(
-                    graph.version,
-                ).toBeTruthy();
-
-                expect(
-                    graph.nodes.length,
-                ).toBeGreaterThan(0);
-
-                expect(
-                    graph.edges.length,
-                ).toBeGreaterThan(0);
-
-                //
-                // Expected planning nodes
-                //
-
-                expect(
-                    graph.nodes,
-                ).toEqual(
-                    expect.arrayContaining([
-
-                        expect.objectContaining({
-
-                            id:
-                                "requirements-analysis",
-
-                        }),
-
-                        expect.objectContaining({
-
-                            id:
-                                "requirements-design",
-
-                        }),
-
-                        expect.objectContaining({
-
-                            id:
-                                "requirements-verification",
-
-                        }),
-
-                    ]),
+                    "Requirements Document",
                 );
 
                 //
-                // Expected dependency graph
+                // Generated document
                 //
 
                 expect(
-                    graph.edges,
-                ).toEqual(
-                    expect.arrayContaining([
+                    artifact?.payload,
+                ).toBeDefined();
 
-                        {
+                expect(
+                    typeof artifact?.payload,
+                ).toBe(
+                    "string",
+                );
 
-                            from:
-                                "requirements-analysis",
+                const document =
+                    artifact?.payload as string;
 
-                            to:
-                                "requirements-design",
+                expect(
+                    document.length,
+                ).toBeGreaterThan(0);
 
-                        },
-
-                        {
-
-                            from:
-                                "requirements-design",
-
-                            to:
-                                "requirements-verification",
-
-                        },
-
-                    ]),
+                expect(
+                    document,
+                ).toContain(
+                    "# Sample Requirements",
                 );
 
                 //
@@ -345,7 +255,7 @@ Security requirements must be enforced for authenticated operations.
                 expect(
                     artifact?.parents[0]?.type,
                 ).toBe(
-                    "REQUIREMENTS_PLAN",
+                    "VALIDATED_REQUIREMENTS",
                 );
 
             },

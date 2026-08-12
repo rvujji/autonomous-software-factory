@@ -8,6 +8,10 @@ import {
 } from "@engineering/shared/plan";
 
 import {
+    Graph,
+} from "@engineering/shared/graph";
+
+import {
     Engine,
     EngineContext,
     EngineRequest,
@@ -15,36 +19,6 @@ import {
     EngineSpecification,
     EngineType,
 } from "@engineering/shared/engine";
-
-interface ExecutionGraphNode {
-
-    readonly id: string;
-
-    readonly name: string;
-
-    readonly objective: string;
-
-}
-
-interface ExecutionGraphEdge {
-
-    readonly from: string;
-
-    readonly to: string;
-
-}
-
-interface ExecutionGraph {
-
-    readonly name: string;
-
-    readonly version: string;
-
-    readonly nodes: readonly ExecutionGraphNode[];
-
-    readonly edges: readonly ExecutionGraphEdge[];
-
-}
 
 export class BuildRequirementsGraphEngine
 implements Engine {
@@ -112,7 +86,9 @@ implements Engine {
                 step => {
 
                     if (
-                        nodeIds.has(step.id)
+                        nodeIds.has(
+                            step.id,
+                        )
                     ) {
 
                         throw new Error(
@@ -193,7 +169,7 @@ implements Engine {
                 },
             );
 
-        const graph: ExecutionGraph = {
+        const graph: Graph = {
 
             name:
                 plan.name,
@@ -325,7 +301,9 @@ implements Engine {
         }
 
         if (
-            !Array.isArray(value.steps)
+            !Array.isArray(
+                value.steps,
+            )
         ) {
 
             throw new Error(
@@ -335,7 +313,9 @@ implements Engine {
         }
 
         if (
-            !Array.isArray(value.dependencies)
+            !Array.isArray(
+                value.dependencies,
+            )
         ) {
 
             throw new Error(
