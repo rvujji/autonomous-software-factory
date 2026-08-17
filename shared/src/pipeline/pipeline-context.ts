@@ -1,1 +1,3 @@
-export interface PipelineContext {}
+export interface PipelineContext {
+    readonly executionId?: string;
+}

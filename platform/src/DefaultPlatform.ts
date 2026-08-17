@@ -24,6 +24,7 @@ import {
 } from "@engineering/core/pipeline";
 
 import {
+    InMemoryEventPublisher,
     SystemClock,
     UuidIdentifierGenerator,
 } from "@engineering/core/foundation";
@@ -69,6 +70,7 @@ implements Platform {
 
     readonly executions:
         ExecutionRuntime;
+        
 
     private constructor(
 
@@ -146,6 +148,9 @@ implements Platform {
 
         const identifierGenerator =
             new UuidIdentifierGenerator();
+
+        const eventPublisher =
+            new InMemoryEventPublisher();
 
         //
         // Persistence
@@ -288,6 +293,7 @@ implements Platform {
         const pipelineRuntime =
             new PipelineRuntime(
                 pipelineRegistry,
+                eventPublisher,
             );
 
         //
@@ -296,15 +302,11 @@ implements Platform {
 
         const executionRuntime =
             new ExecutionRuntime(
-
                 pipelineRuntime,
-
                 executionRepository,
-
                 identifierGenerator,
-
                 clock,
-
+                eventPublisher,
             );
 
         return new DefaultPlatform(

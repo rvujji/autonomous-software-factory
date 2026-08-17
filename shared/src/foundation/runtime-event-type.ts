@@ -1,0 +1,15 @@
+export type RuntimeEventType =
+
+    | "EXECUTION_STARTED"
+    | "EXECUTION_COMPLETED"
+    | "EXECUTION_FAILED"
+
+    | "PIPELINE_STARTED"
+    | "PIPELINE_COMPLETED"
+    | "PIPELINE_FAILED"
+
+    | "ENGINE_STARTED"
+    | "ENGINE_COMPLETED"
+    | "ENGINE_FAILED"
+
+    | "ARTIFACT_CREATED";

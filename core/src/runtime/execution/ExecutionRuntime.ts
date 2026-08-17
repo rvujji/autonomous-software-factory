@@ -4,7 +4,7 @@ import {
 } from "@engineering/shared/execution";
 
 import { Clock } from "../foundation/Clock.js";
-import { IdentifierGenerator } from "@engineering/shared/foundation";
+import { EventPublisher, IdentifierGenerator } from "@engineering/shared/foundation";
 
 import { PipelineRuntime } from "../pipeline/PipelineRuntime.js";
 import { ExecutionRepository } from "./ExecutionRepository.js";
@@ -14,12 +14,10 @@ export class ExecutionRuntime {
     constructor(
 
         private readonly pipelineRuntime: PipelineRuntime,
-
         private readonly repository: ExecutionRepository,
-
         private readonly identifierGenerator: IdentifierGenerator,
-
         private readonly clock: Clock,
+        private readonly events?: EventPublisher,
 
     ) {}
 
@@ -47,6 +45,16 @@ export class ExecutionRuntime {
             },
 
         };
+        this.events?.publish({
+            type:"EXECUTION_STARTED",
+            timestamp:startedAt,
+            component:"ExecutionRuntime",
+            executionId:execution.id,
+            data: {
+                pipeline:
+                    execution.pipeline,
+            },
+        });
 
         await this.repository.create(
             execution,
@@ -68,17 +76,9 @@ export class ExecutionRuntime {
 
             const result =
                 await this.pipelineRuntime.execute(
-
                     request.pipeline,
-
-                    {},
-
-                    {
-
-                        artifacts: execution.artifacts,
-
-                    },
-
+                    {executionId:execution.id,},
+                    {artifacts: execution.artifacts,},
                 );
 
             const completedAt =
@@ -109,7 +109,16 @@ export class ExecutionRuntime {
             await this.repository.update(
                 execution,
             );
-
+            this.events?.publish({
+                type:"EXECUTION_COMPLETED",
+                timestamp:completedAt,
+                component:"ExecutionRuntime",
+                executionId:execution.id,
+                data: {
+                    pipeline:
+                        execution.pipeline,
+                },
+            });
             return execution;
 
         }
@@ -141,6 +150,17 @@ export class ExecutionRuntime {
             await this.repository.update(
                 execution,
             );
+
+            this.events?.publish({
+                type:"EXECUTION_FAILED",
+                timestamp:completedAt,
+                component:"ExecutionRuntime",
+                executionId:execution.id,
+                data: {
+                    pipeline:
+                        execution.pipeline,
+                },
+            });
 
             throw error;
 
