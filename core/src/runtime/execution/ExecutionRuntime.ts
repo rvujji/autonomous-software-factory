@@ -4,7 +4,7 @@ import {
 } from "@engineering/shared/execution";
 
 import { Clock } from "../foundation/Clock.js";
-import { EventPublisher, IdentifierGenerator } from "@engineering/shared/foundation";
+import { EventPublisher, IdentifierGenerator, Logger } from "@engineering/shared/foundation";
 
 import { PipelineRuntime } from "../pipeline/PipelineRuntime.js";
 import { ExecutionRepository } from "./ExecutionRepository.js";
@@ -18,13 +18,14 @@ export class ExecutionRuntime {
         private readonly identifierGenerator: IdentifierGenerator,
         private readonly clock: Clock,
         private readonly events?: EventPublisher,
+        private readonly logger?: Logger,
 
     ) {}
 
     async start(
         request: StartExecutionRequest,
     ): Promise<Execution> {
-
+        this.logger?.debug("Execution started.",{},);
         const startedAt =
             this.clock.now();
 
@@ -119,13 +120,19 @@ export class ExecutionRuntime {
                         execution.pipeline,
                 },
             });
+            this.logger?.debug("Execution completed.",{},);
             return execution;
 
         }
         catch (error) {
-
-            const completedAt =
-                this.clock.now();
+            this.logger?.error("Execution failed.",
+                {
+                    executionId:execution.id,
+                    pipeline:execution.pipeline,
+                    error:error instanceof Error? error.message: String(error),
+                },
+            );
+            const completedAt =this.clock.now();
 
             execution = {
 

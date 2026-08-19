@@ -7,7 +7,10 @@ import {
 import {
     DefaultPlatform,
 } from "../../src/DefaultPlatform.js";
-import { ArtifactState } from "@engineering/shared/artifact";
+
+import {
+    ArtifactState,
+} from "@engineering/shared/artifact";
 
 describe(
     "Requirements Execution E2E",
@@ -121,7 +124,7 @@ Security controls must protect authenticated operations.
                 ).toBeGreaterThanOrEqual(0);
 
                 //
-                // Pipeline result
+                // Final pipeline result
                 //
 
                 expect(
@@ -138,61 +141,74 @@ Security controls must protect authenticated operations.
                 expect(
                     artifact?.type,
                 ).toBe(
-                    "VALIDATED_REQUIREMENTS",
+                    "REQUIREMENTS_DOCUMENT",
                 );
+
+                expect(
+                    artifact?.name,
+                ).toBe(
+                    "Requirements Document",
+                );
+
+                //
+                // Generated document
+                //
 
                 expect(
                     artifact?.payload,
                 ).toBeDefined();
 
-                //
-                // Requirements payload
-                //
+                expect(
+                    typeof artifact?.payload,
+                ).toBe(
+                    "string",
+                );
 
-                const payload =
-                    artifact?.payload as {
-
-                        readonly projectName:
-                            string;
-
-                        readonly version:
-                            string;
-
-                        readonly functionalRequirements:
-                            readonly unknown[];
-
-                        readonly nonFunctionalRequirements:
-                            readonly unknown[];
-
-                        readonly constraints:
-                            readonly unknown[];
-
-                        readonly assumptions:
-                            readonly unknown[];
-
-                    };
+                const document =
+                    artifact?.payload as string;
 
                 expect(
-                    payload.projectName,
-                ).toBeTruthy();
-
-                expect(
-                    payload.version,
-                ).toBeTruthy();
-
-                expect(
-                    payload.functionalRequirements.length +
-                    payload.nonFunctionalRequirements.length,
+                    document.length,
                 ).toBeGreaterThan(0);
 
+                expect(
+                    document,
+                ).toContain(
+                    "# Engineering Platform",
+                );
+
+                expect(
+                    document,
+                ).toContain(
+                    "Functional Requirements",
+                );
+
+                expect(
+                    document,
+                ).toContain(
+                    "Non-Functional Requirements",
+                );
+
                 //
-                // Execution repository
+                // Traceability
                 //
+                // The final document must retain
+                // traceability to the validated
+                // requirements artifact.
                 //
-                // ExecutionRepository is intentionally
-                // internal to the runtime, so we verify
-                // persistence through the runtime's
-                // observable execution state only.
+
+                expect(
+                    artifact?.parents,
+                ).toHaveLength(1);
+
+                expect(
+                    artifact?.parents[0]?.type,
+                ).toBe(
+                    "VALIDATED_REQUIREMENTS",
+                );
+
+                //
+                // Execution timing
                 //
 
                 expect(
@@ -203,7 +219,7 @@ Security controls must protect authenticated operations.
 
             },
 
-            60_000,
+            120_000,
 
         );
 

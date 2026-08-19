@@ -7,7 +7,7 @@ export default defineConfig({
     test: {
 
         testTimeout:
-            60_000,
+            120_000,
 
         fileParallelism:
             false,

@@ -1,0 +1,1276 @@
+{
+  "projectName": "Engineering Platform",
+  "version": "1.0.0",
+  "functionalRequirements": [
+    {
+      "id": "FR-001",
+      "title": "Create Engineering Projects",
+      "description": "The platform must allow users to create engineering projects.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-001-1",
+          "description": "Users can create a new engineering project through the platform."
+        },
+        {
+          "id": "AC-001-2",
+          "description": "Created projects are persisted and retrievable."
+        }
+      ]
+    },
+    {
+      "id": "FR-002",
+      "title": "User Authentication",
+      "description": "Users must be able to authenticate securely.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-002-1",
+          "description": "Users can authenticate using secure credentials."
+        },
+        {
+          "id": "AC-002-2",
+          "description": "Authenticated operations enforce security requirements."
+        }
+      ]
+    },
+    {
+      "id": "FR-003",
+      "title": "Maintain Project Requirements",
+      "description": "The system must maintain project requirements.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-003-1",
+          "description": "Project requirements are stored and retrievable."
+        },
+        {
+          "id": "AC-003-2",
+          "description": "Requirements traceability is preserved."
+        }
+      ]
+    },
+    {
+      "id": "FR-004",
+      "title": "Preserve Artifact Traceability",
+      "description": "The system must preserve traceability between engineering artifacts.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-004-1",
+          "description": "Every artifact records creation time, creating engine, execution identifier, pipeline identifier, and parent artifacts."
+        },
+        {
+          "id": "AC-004-2",
+          "description": "Traceability cannot be disabled."
+        }
+      ]
+    },
+    {
+      "id": "FR-005",
+      "title": "Create Artifacts",
+      "description": "The Artifact Runtime shall create new immutable artifacts given artifact type, payload, and metadata.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-005-1",
+          "description": "Artifact creation produces an immutable artifact with identity, type, version, metadata, payload, parent references, traceability, and lifecycle state."
+        },
+        {
+          "id": "AC-005-2",
+          "description": "Creation fails if required information (identifier, type, version, payload, metadata) is missing."
+        }
+      ]
+    },
+    {
+      "id": "FR-006",
+      "title": "Retrieve Artifacts",
+      "description": "The Artifact Runtime shall retrieve artifacts by identifier and resolve specific versions.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-006-1",
+          "description": "Given an artifact identifier, the complete artifact is returned."
+        },
+        {
+          "id": "AC-006-2",
+          "description": "Given an artifact identifier and version, the requested version is returned."
+        }
+      ]
+    },
+    {
+      "id": "FR-007",
+      "title": "Persist Artifacts",
+      "description": "The Artifact Runtime shall persist artifact payload, metadata, traceability, and relationships.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-007-1",
+          "description": "Artifact payload, metadata, relationships, versions, lifecycle, and execution references are persisted."
+        },
+        {
+          "id": "AC-007-2",
+          "description": "Artifacts are immutable; updating an artifact produces a new version."
+        }
+      ]
+    },
+    {
+      "id": "FR-008",
+      "title": "Resolve Artifact Relationships",
+      "description": "The Artifact Runtime shall resolve parent references, child references, execution references, pipeline references, and engine references.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-008-1",
+          "description": "Parent artifacts referenced by the current artifact are returned."
+        },
+        {
+          "id": "AC-008-2",
+          "description": "Artifacts produced from the current artifact are returned as children."
+        }
+      ]
+    },
+    {
+      "id": "FR-009",
+      "title": "List Artifact Versions",
+      "description": "The Artifact Runtime shall list every version belonging to the same logical artifact.",
+      "type": "FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-009-1",
+          "description": "All versions of a logical artifact are returned."
+        },
+        {
+          "id": "AC-009-2",
+          "description": "Previous versions remain available indefinitely."
+        }
+      ]
+    },
+    {
+      "id": "FR-010",
+      "title": "Archive Artifacts",
+      "description": "The Artifact Runtime shall archive artifacts by marking them as archived without modifying stored content.",
+      "type": "FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-010-1",
+          "description": "Archived artifacts retain their stored content."
+        },
+        {
+          "id": "AC-010-2",
+          "description": "Deletion of immutable artifacts is prohibited."
+        }
+      ]
+    },
+    {
+      "id": "FR-011",
+      "title": "Resolve and Execute Engines",
+      "description": "The Engine Runtime shall resolve engines by identifier, validate engine contracts, create execution contexts, invoke engines, and collect execution results.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-011-1",
+          "description": "Given an engine identifier, the registered engine is returned."
+        },
+        {
+          "id": "AC-011-2",
+          "description": "Execution fails if the engine is unknown, unavailable, or contract validation fails."
+        },
+        {
+          "id": "AC-011-3",
+          "description": "Execution context includes execution identifier, pipeline identifier, step identifier, input artifacts, runtime configuration, and execution metadata."
+        }
+      ]
+    },
+    {
+      "id": "FR-012",
+      "title": "Publish Engine Runtime Events",
+      "description": "The Engine Runtime shall publish events for engine started, completed, and failed.",
+      "type": "FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-012-1",
+          "description": "Engine Started, Engine Completed, and Engine Failed events are published."
+        },
+        {
+          "id": "AC-012-2",
+          "description": "Event publication is best-effort and does not affect execution outcome."
+        }
+      ]
+    },
+    {
+      "id": "FR-013",
+      "title": "Load and Validate Pipelines",
+      "description": "The Pipeline Runtime shall load pipeline definitions by identifier and validate pipeline structure including step order, unique step identifiers, referenced engines, and configuration validity.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-013-1",
+          "description": "Given a pipeline identifier, the pipeline definition is returned."
+        },
+        {
+          "id": "AC-013-2",
+          "description": "Validation completes before execution begins."
+        },
+        {
+          "id": "AC-013-3",
+          "description": "Pipeline execution fails if the pipeline does not exist, step order is invalid, duplicate step identifiers exist, engine cannot be resolved, or required configuration is missing."
+        }
+      ]
+    },
+    {
+      "id": "FR-014",
+      "title": "Execute Pipeline Steps Sequentially",
+      "description": "The Pipeline Runtime shall execute each step sequentially, with each step completing before the next begins, coordinating through the Engine Runtime.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-014-1",
+          "description": "Each step resolves exactly one engine and executes through the Engine Runtime."
+        },
+        {
+          "id": "AC-014-2",
+          "description": "Execution order is deterministic."
+        }
+      ]
+    },
+    {
+      "id": "FR-015",
+      "title": "Handle Pipeline Failures",
+      "description": "If a pipeline step fails, the Pipeline Runtime shall stop execution, record the failure, publish failure status, and preserve completed step results.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-015-1",
+          "description": "Failure at any step terminates the current execution."
+        },
+        {
+          "id": "AC-015-2",
+          "description": "Completed work remains preserved and is not re-executed automatically."
+        }
+      ]
+    },
+    {
+      "id": "FR-016",
+      "title": "Publish Pipeline Runtime Events",
+      "description": "The Pipeline Runtime shall publish Pipeline Started, Step Started, Step Completed, Step Failed, Pipeline Completed, and Pipeline Failed events.",
+      "type": "FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-016-1",
+          "description": "All pipeline and step lifecycle events are published."
+        },
+        {
+          "id": "AC-016-2",
+          "description": "Event publication does not affect execution outcome."
+        }
+      ]
+    },
+    {
+      "id": "FR-017",
+      "title": "Discover and Register Engines",
+      "description": "The Engine Registry shall discover engine implementations from Engine Packs, validate engine contracts, and register engines. Duplicate identifiers shall be rejected.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-017-1",
+          "description": "Engine discovery locates available engine implementations from registered Engine Packs."
+        },
+        {
+          "id": "AC-017-2",
+          "description": "Duplicate engine identifiers are rejected during registration."
+        },
+        {
+          "id": "AC-017-3",
+          "description": "Registration fails if engine contract is invalid, required metadata is missing, or version is incompatible."
+        }
+      ]
+    },
+    {
+      "id": "FR-018",
+      "title": "Resolve Engines by Identifier",
+      "description": "The Engine Registry shall resolve engines by identifier, returning only Available engines from the registry.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-018-1",
+          "description": "Given an engine identifier, the registered engine reference is returned."
+        },
+        {
+          "id": "AC-018-2",
+          "description": "Only engines in the Available state may be resolved."
+        }
+      ]
+    },
+    {
+      "id": "FR-019",
+      "title": "List and Filter Engines",
+      "description": "The Engine Registry shall list all registered engines with filtering support for capability, version, Engine Pack, and status.",
+      "type": "FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-019-1",
+          "description": "All registered engines can be listed."
+        },
+        {
+          "id": "AC-019-2",
+          "description": "Filtering by capability, version, Engine Pack, and status is supported."
+        }
+      ]
+    },
+    {
+      "id": "FR-020",
+      "title": "Manage Engine Lifecycle States",
+      "description": "The Engine Registry shall manage engine lifecycle through Discovered, Registered, Available, Deprecated, and Retired states.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-020-1",
+          "description": "Engines transition through Discovered, Registered, Available, Deprecated, and Retired states."
+        },
+        {
+          "id": "AC-020-2",
+          "description": "Removed engines are no longer available for resolution while historical execution records remain valid."
+        }
+      ]
+    },
+    {
+      "id": "FR-021",
+      "title": "Publish Registry Events",
+      "description": "The Engine Registry shall publish Engine Discovered, Engine Registered, Engine Deprecated, Engine Retired, and Registry Validation Failed events.",
+      "type": "FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-021-1",
+          "description": "All registry lifecycle events are published."
+        },
+        {
+          "id": "AC-021-2",
+          "description": "Event publication does not modify registry state."
+        }
+      ]
+    },
+    {
+      "id": "FR-022",
+      "title": "Create and Manage Execution Instances",
+      "description": "The Execution Runtime shall create execution instances, generate execution identifiers, maintain execution state, and record execution history.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-022-1",
+          "description": "Execution instances are created with execution identifier, pipeline identifier, current state, timestamps, step history, produced artifacts, diagnostics, and metadata."
+        },
+        {
+          "id": "AC-022-2",
+          "description": "Execution records are immutable after completion."
+        }
+      ]
+    },
+    {
+      "id": "FR-023",
+      "title": "Track Execution Lifecycle States",
+      "description": "The Execution Runtime shall manage execution through Created, Running, Completed, Failed, and Archived states. Illegal transitions shall be rejected.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-023-1",
+          "description": "Valid states are Created, Running, Completed, Failed, and Archived."
+        },
+        {
+          "id": "AC-023-2",
+          "description": "Illegal state transitions are rejected."
+        }
+      ]
+    },
+    {
+      "id": "FR-024",
+      "title": "Record Step Execution History",
+      "description": "The Execution Runtime shall record step history including step identifier, engine identifier, status, duration, produced artifacts, and diagnostics for each completed step.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-024-1",
+          "description": "Step history is append-only and existing history is never modified."
+        },
+        {
+          "id": "AC-024-2",
+          "description": "Execution history remains internally consistent."
+        }
+      ]
+    },
+    {
+      "id": "FR-025",
+      "title": "Archive Executions",
+      "description": "The Execution Runtime shall archive completed executions into historical storage. Archived executions remain readable.",
+      "type": "FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-025-1",
+          "description": "Completed executions can be archived."
+        },
+        {
+          "id": "AC-025-2",
+          "description": "Archived executions remain readable and execution history remains available."
+        }
+      ]
+    },
+    {
+      "id": "FR-026",
+      "title": "Persist Runtime Objects",
+      "description": "The Storage Manager shall persist artifacts, execution records, runtime metadata, configuration snapshots, and execution logs atomically.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-026-1",
+          "description": "Objects are persisted atomically; a failed transaction leaves storage unchanged."
+        },
+        {
+          "id": "AC-026-2",
+          "description": "Partial writes are prohibited."
+        }
+      ]
+    },
+    {
+      "id": "FR-027",
+      "title": "Retrieve and Archive Stored Objects",
+      "description": "The Storage Manager shall retrieve objects by identifier and archive objects into historical storage while preventing deletion of immutable runtime objects.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-027-1",
+          "description": "Object retrieval returns exactly one object given an identifier."
+        },
+        {
+          "id": "AC-027-2",
+          "description": "Deletion is prohibited for immutable runtime objects; only temporary runtime caches may be deleted."
+        }
+      ]
+    },
+    {
+      "id": "FR-028",
+      "title": "Discover and Execute Backend Requests",
+      "description": "The Backend Manager shall discover available backends, validate backend contracts, resolve backends by identifier, execute backend requests, and return normalized responses.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-028-1",
+          "description": "Backend discovery locates available backend implementations."
+        },
+        {
+          "id": "AC-028-2",
+          "description": "Execution fails if backend is unknown, unavailable, contract is invalid, or request is malformed."
+        },
+        {
+          "id": "AC-028-3",
+          "description": "Responses are normalized before returning to the caller."
+        }
+      ]
+    },
+    {
+      "id": "FR-029",
+      "title": "Monitor Backend Availability",
+      "description": "The Backend Manager shall monitor backend availability and report whether a backend is Available, Busy, or Unavailable.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-029-1",
+          "description": "Backend availability is observable by the Core."
+        },
+        {
+          "id": "AC-029-2",
+          "description": "Backend Registered, Available, Unavailable, Request Started, Request Completed, and Request Failed events are published."
+        }
+      ]
+    },
+    {
+      "id": "FR-030",
+      "title": "Load and Validate Configuration",
+      "description": "The Configuration Manager shall load configuration from supported providers (YAML, JSON, Environment Variables), validate required values, types, and validation rules, and reject invalid configuration before runtime startup.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-030-1",
+          "description": "Configuration is loaded from supported providers."
+        },
+        {
+          "id": "AC-030-2",
+          "description": "Invalid configuration prevents runtime startup."
+        },
+        {
+          "id": "AC-030-3",
+          "description": "Required values exist, types are correct, and values satisfy validation rules."
+        }
+      ]
+    },
+    {
+      "id": "FR-031",
+      "title": "Resolve and Override Configuration",
+      "description": "The Configuration Manager shall resolve configuration using precedence (Runtime Defaults, Configuration Files, Environment Variables, Command Line Arguments, Execution Overrides) and support layered overrides.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-031-1",
+          "description": "Configuration is resolved using the defined precedence order."
+        },
+        {
+          "id": "AC-031-2",
+          "description": "Higher-precedence configuration overrides lower-precedence configuration."
+        }
+      ]
+    },
+    {
+      "id": "FR-032",
+      "title": "Record Runtime Events and Diagnostics",
+      "description": "The Logging Manager shall record runtime events, execution diagnostics, performance metrics, and audit information.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-032-1",
+          "description": "Runtime events are recorded with component, event type, timestamp, severity, and metadata."
+        },
+        {
+          "id": "AC-032-2",
+          "description": "Diagnostics include exceptions, stack traces, validation failures, and runtime warnings."
+        },
+        {
+          "id": "AC-032-3",
+          "description": "Metrics include duration, resource usage, step execution time, and backend response time."
+        }
+      ]
+    },
+    {
+      "id": "FR-033",
+      "title": "Publish and Query Logs",
+      "description": "The Logging Manager shall forward log entries to configured logging providers and support retrieval of historical log entries using filtering criteria.",
+      "type": "FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-033-1",
+          "description": "Log entries are forwarded to configured logging providers."
+        },
+        {
+          "id": "AC-033-2",
+          "description": "Historical log entries can be queried with filtering criteria."
+        }
+      ]
+    },
+    {
+      "id": "FR-034",
+      "title": "Parse and Validate CLI Commands",
+      "description": "The CLI Runtime shall parse command-line arguments, validate commands exist, and verify required arguments and valid argument values before runtime invocation.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-034-1",
+          "description": "Commands, arguments, and options are parsed and validated."
+        },
+        {
+          "id": "AC-034-2",
+          "description": "Invalid commands fail before runtime invocation."
+        }
+      ]
+    },
+    {
+      "id": "FR-035",
+      "title": "Invoke Core Services via CLI",
+      "description": "The CLI Runtime shall resolve configuration, invoke appropriate Core services, display execution progress and results, and return deterministic exit codes.",
+      "type": "FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-035-1",
+          "description": "Core services are invoked through published contracts."
+        },
+        {
+          "id": "AC-035-2",
+          "description": "Execution progress is displayed for long-running operations."
+        },
+        {
+          "id": "AC-035-3",
+          "description": "Deterministic exit codes are returned for success, validation failure, configuration failure, execution failure, and unexpected failure."
+        }
+      ]
+    },
+    {
+      "id": "FR-036",
+      "title": "Support Modular Backend Execution",
+      "description": "The platform must support modular backend execution.",
+      "type": "FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-036-1",
+          "description": "Multiple backend providers can be registered and resolved."
+        },
+        {
+          "id": "AC-036-2",
+          "description": "Backends are interchangeable through published contracts."
+        }
+      ]
+    }
+  ],
+  "nonFunctionalRequirements": [
+    {
+      "id": "NFR-001",
+      "title": "Deterministic Execution",
+      "description": "Given identical configuration, inputs, pipeline definition, and Engine Pack, the Core shall execute the same pipeline in the same order.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-001-1",
+          "description": "Identical inputs and configuration produce identical execution behavior."
+        },
+        {
+          "id": "NAC-001-2",
+          "description": "Execution order remains predictable and reproducible."
+        }
+      ]
+    },
+    {
+      "id": "NFR-002",
+      "title": "Artifact Immutability",
+      "description": "Artifacts are immutable. Every transformation produces a new artifact. Existing artifacts are never modified. Artifact history shall always remain reproducible.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-002-1",
+          "description": "No existing artifact is modified after creation."
+        },
+        {
+          "id": "NAC-002-2",
+          "description": "Artifact history is always reproducible from stored artifacts."
+        }
+      ]
+    },
+    {
+      "id": "NFR-003",
+      "title": "Domain Neutrality",
+      "description": "The Core shall remain completely domain-neutral and never understand specifications, reviews, repairs, products, business rules, or AI prompts. It executes artifacts without interpreting them.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-003-1",
+          "description": "The Core contains no business-specific or domain-specific logic."
+        },
+        {
+          "id": "NAC-003-2",
+          "description": "Artifact content is treated as opaque data."
+        }
+      ]
+    },
+    {
+      "id": "NFR-004",
+      "title": "Contract-Based Design",
+      "description": "Every extensible component shall communicate through published contracts. The Core depends only upon contracts and never upon implementation details.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-004-1",
+          "description": "All extensible components communicate through published contracts (Engine Contract, Storage Contract, Backend Contract, Registry Contract)."
+        },
+        {
+          "id": "NAC-004-2",
+          "description": "The Core never depends upon implementation-specific behavior."
+        }
+      ]
+    },
+    {
+      "id": "NFR-005",
+      "title": "Engine Isolation",
+      "description": "Every engine executes independently. The Core shall never assume engine implementation, language, technology, or provider. Only published contracts are visible.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-005-1",
+          "description": "No engine receives special handling from the Core."
+        },
+        {
+          "id": "NAC-005-2",
+          "description": "Engines are treated identically through the Engine Contract."
+        }
+      ]
+    },
+    {
+      "id": "NFR-006",
+      "title": "Artifact-Centric Communication",
+      "description": "Components communicate exclusively through artifacts. No engine may directly invoke another engine. Artifacts are the only mechanism through which engineering information flows.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-006-1",
+          "description": "No direct engine-to-engine invocation occurs."
+        },
+        {
+          "id": "NAC-006-2",
+          "description": "All engineering information flows through artifacts."
+        }
+      ]
+    },
+    {
+      "id": "NFR-007",
+      "title": "Infrastructure Independence",
+      "description": "Infrastructure services shall remain interchangeable. Replacing one storage, logging, configuration, or execution backend implementation shall not require architectural changes.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-007-1",
+          "description": "Storage providers can be replaced without modifying the Core."
+        },
+        {
+          "id": "NAC-007-2",
+          "description": "Execution backends can be replaced without modifying the Core."
+        }
+      ]
+    },
+    {
+      "id": "NFR-008",
+      "title": "Execution Transparency",
+      "description": "Every execution shall produce a complete execution record including pipeline, steps, engines, inputs, outputs, duration, status, and errors. No execution shall become anonymous.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-008-1",
+          "description": "Every execution is fully logged with pipeline, steps, engines, inputs, outputs, duration, status, and errors."
+        },
+        {
+          "id": "NAC-008-2",
+          "description": "Execution history is append-only and never modified."
+        }
+      ]
+    },
+    {
+      "id": "NFR-009",
+      "title": "Atomic Storage Operations",
+      "description": "Every storage persistence operation shall be atomic. A failed transaction shall leave storage unchanged. Partial writes are prohibited.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-009-1",
+          "description": "Failed transactions leave storage in its prior state."
+        },
+        {
+          "id": "NAC-009-2",
+          "description": "No partial writes occur under any failure condition."
+        }
+      ]
+    },
+    {
+      "id": "NFR-010",
+      "title": "Logging Independence from Execution",
+      "description": "Logging is observational. Runtime behavior shall never depend upon successful logging. Logging failures shall never interrupt execution. Logging is best-effort.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-010-1",
+          "description": "Logging failures do not interrupt or affect runtime execution."
+        },
+        {
+          "id": "NAC-010-2",
+          "description": "Log entries are immutable once created."
+        }
+      ]
+    },
+    {
+      "id": "NFR-011",
+      "title": "Minimal Runtime Overhead",
+      "description": "Engine resolution shall be deterministic. Engine invocation overhead shall remain minimal. Pipeline validation shall execute once per execution. CLI startup shall introduce minimal overhead.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-011-1",
+          "description": "Engine resolution operates in constant or near-constant time."
+        },
+        {
+          "id": "NAC-011-2",
+          "description": "Execution context creation is lightweight."
+        },
+        {
+          "id": "NAC-011-3",
+          "description": "CLI startup and command parsing are lightweight."
+        }
+      ]
+    },
+    {
+      "id": "NFR-012",
+      "title": "Error Handling Integrity",
+      "description": "Execution failures never corrupt runtime state. Storage failures never corrupt previously stored data. Registry failures never corrupt existing registrations. Backend failures never corrupt runtime state.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-012-1",
+          "description": "No failure condition corrupts previously stored or recorded data."
+        },
+        {
+          "id": "NAC-012-2",
+          "description": "Execution failures, storage failures, registry failures, and backend failures are isolated and do not propagate data corruption."
+        }
+      ]
+    },
+    {
+      "id": "NFR-013",
+      "title": "Stability and Maintainability",
+      "description": "The Engineering Core shall provide a stable execution environment. Success is measured by stability, determinism, extensibility, simplicity, reusability, and maintainability.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-013-1",
+          "description": "Multiple Engine Packs can operate consistently without requiring changes to the Core."
+        },
+        {
+          "id": "NAC-013-2",
+          "description": "The Core prioritizes simplicity, determinism, stability, and extensibility over premature distribution or framework complexity."
+        }
+      ]
+    },
+    {
+      "id": "NFR-014",
+      "title": "Log Entry Immutability and Structure",
+      "description": "Every log entry shall contain log identifier, timestamp, severity, component, event type, and metadata. Log entries are immutable.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-014-1",
+          "description": "Every log entry contains timestamp, severity, component, and event type."
+        },
+        {
+          "id": "NAC-014-2",
+          "description": "Entries missing required fields are rejected."
+        }
+      ]
+    },
+    {
+      "id": "NFR-015",
+      "title": "Deterministic Configuration Resolution",
+      "description": "Configuration resolution shall be deterministic. Configuration loading shall occur once during startup unless explicitly reloaded. Configuration lookup shall remain lightweight.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "NAC-015-1",
+          "description": "Configuration resolution produces the same result given the same inputs."
+        },
+        {
+          "id": "NAC-015-2",
+          "description": "Reload behavior is deterministic."
+        }
+      ]
+    }
+  ],
+  "constraints": [
+    {
+      "id": "C-001",
+      "title": "Core Domain Neutrality Constraint",
+      "description": "The Core is domain-neutral and shall never contain business knowledge, engineering specifications, product architecture, review logic, repair logic, AI prompts, or business rules.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-001-1",
+          "description": "No business-specific or domain-specific logic exists in the Core implementation."
+        }
+      ]
+    },
+    {
+      "id": "C-002",
+      "title": "Pipeline Declarative Constraint",
+      "description": "Pipelines are declarative. The Core executes pipelines exactly as defined. Pipeline definitions belong to Engine Packs and the Core simply executes them.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-002-1",
+          "description": "Pipeline definitions are provided by Engine Packs, not the Core."
+        },
+        {
+          "id": "CAC-002-2",
+          "description": "The Core executes pipelines exactly as defined without modification."
+        }
+      ]
+    },
+    {
+      "id": "C-003",
+      "title": "Engine Through Contracts Constraint",
+      "description": "Every engine executes through the Engine Contract. No engine receives special handling. The Core never instantiates or references engine implementations directly.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-003-1",
+          "description": "All engine execution occurs through the Engine Contract."
+        },
+        {
+          "id": "CAC-003-2",
+          "description": "No direct references to engine implementations exist in the Core."
+        }
+      ]
+    },
+    {
+      "id": "C-004",
+      "title": "Immutability of Artifacts Constraint",
+      "description": "Artifacts are immutable. Every transformation produces a new artifact. Existing artifacts are never modified. Artifact history shall always remain reproducible.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-004-1",
+          "description": "No artifact is modified after creation under any circumstance."
+        }
+      ]
+    },
+    {
+      "id": "C-005",
+      "title": "Engine Pack Independence Constraint",
+      "description": "Engine Packs remain independent. The Core never contains Engine Pack-specific logic. Engine Packs never register themselves directly; registration occurs only through the Engine Registry.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-005-1",
+          "description": "The Core contains no Engine Pack-specific logic."
+        },
+        {
+          "id": "CAC-005-2",
+          "description": "Engine registration occurs exclusively through the Engine Registry."
+        }
+      ]
+    },
+    {
+      "id": "C-006",
+      "title": "Infrastructure Replaceability Constraint",
+      "description": "Storage, logging, configuration, and execution backends are replaceable. Replacing one implementation shall not require architectural changes or Engine Pack modifications.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-006-1",
+          "description": "Infrastructure implementations can be swapped without modifying Core architecture."
+        }
+      ]
+    },
+    {
+      "id": "C-007",
+      "title": "Execution Logging Constraint",
+      "description": "Every execution is logged. Every artifact is versioned. Every dependency points toward published abstractions. Every component communicates through contracts.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-007-1",
+          "description": "No execution occurs without logging."
+        },
+        {
+          "id": "CAC-007-2",
+          "description": "Every artifact has a version."
+        }
+      ]
+    },
+    {
+      "id": "C-008",
+      "title": "Human Authority Constraint",
+      "description": "Humans define architecture, contracts, standards, and pipeline definitions. The Core executes within these boundaries. Automation never modifies Core architecture.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-008-1",
+          "description": "Core architecture changes require explicit human approval."
+        }
+      ]
+    },
+    {
+      "id": "C-009",
+      "title": "Modular Monolith Implementation Constraint",
+      "description": "The Engineering Core shall be implemented as a modular monolith. Each runtime component remains independently testable and replaceable through published contracts.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-009-1",
+          "description": "The Core is implemented as a modular monolith with independently testable components."
+        }
+      ]
+    },
+    {
+      "id": "C-010",
+      "title": "Backward Compatibility Constraint",
+      "description": "Engine Packs remain independently versioned provided they preserve compatibility with Core contracts. Backward compatibility should be maintained whenever practical. Breaking changes require explicit architectural approval.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-010-1",
+          "description": "Engine Packs are independently versioned while maintaining Core contract compatibility."
+        },
+        {
+          "id": "CAC-010-2",
+          "description": "Breaking changes require explicit architectural approval."
+        }
+      ]
+    },
+    {
+      "id": "C-011",
+      "title": "Architectural Invariants Constraint",
+      "description": "The following invariants shall always remain true: every execution belongs to one pipeline, every pipeline consists of ordered steps, every step invokes one engine, every engine produces artifacts, every artifact is immutable, every execution is logged, and every component communicates through contracts.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "CRITICAL",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-011-1",
+          "description": "All architectural invariants hold true at all times."
+        }
+      ]
+    },
+    {
+      "id": "C-012",
+      "title": "Storage Technology Independence Constraint",
+      "description": "The Core shall not depend upon a specific storage technology. Storage implementation may use local filesystem, SQLite, PostgreSQL, object storage, Git repository, or cloud storage.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "CAC-012-1",
+          "description": "The Core has no dependency on any specific storage technology."
+        }
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "A-001",
+      "title": "Engine Pack Availability Assumption",
+      "description": "Engine Packs will be provided as external components that implement the published Engine Contract and define their own pipeline definitions.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-001-1",
+          "description": "Engine Packs conform to the Engine Contract and provide pipeline definitions."
+        }
+      ]
+    },
+    {
+      "id": "A-002",
+      "title": "Shared Contracts Available Assumption",
+      "description": "The Shared layer will provide contracts, models, and standards that the Core consumes. The Core implements these concepts but does not own them.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-002-1",
+          "description": "Shared contracts and models are available for Core consumption."
+        }
+      ]
+    },
+    {
+      "id": "A-003",
+      "title": "Execution Backend Availability Assumption",
+      "description": "External execution backends (such as Claude Code, OpenCode, Cursor) will be available and implement the published Backend Contract.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-003-1",
+          "description": "At least one execution backend is available and implements the Backend Contract."
+        }
+      ]
+    },
+    {
+      "id": "A-004",
+      "title": "Storage Provider Availability Assumption",
+      "description": "A storage provider implementing the Storage Contract will be available for persisting artifacts, execution records, and runtime metadata.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-004-1",
+          "description": "A storage provider implementing the Storage Contract is available."
+        }
+      ]
+    },
+    {
+      "id": "A-005",
+      "title": "Configuration External to Core Assumption",
+      "description": "Configuration remains external to the Engineering Core implementation. Configuration is provided through external sources (YAML, JSON, environment variables) and resolved by the Configuration Manager.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-005-1",
+          "description": "Configuration is loaded from external sources, not embedded in the Core."
+        }
+      ]
+    },
+    {
+      "id": "A-006",
+      "title": "Deterministic Input-Output Assumption",
+      "description": "Given identical inputs and configuration, the Core will produce identical execution behavior. Execution order is predictable and reproducible.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-006-1",
+          "description": "Identical inputs always produce identical outputs and execution behavior."
+        }
+      ]
+    },
+    {
+      "id": "A-007",
+      "title": "Products Independent of Core Assumption",
+      "description": "Products are engineering outcomes produced through Engine Pack execution. The Core never owns product knowledge. Products remain completely independent of the execution platform.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-007-1",
+          "description": "Products are independent of the Core and are produced through Engine Pack execution."
+        }
+      ]
+    },
+    {
+      "id": "A-008",
+      "title": "Future Evolution Preserves Contracts Assumption",
+      "description": "Future evolution of the Core (parallel execution, distributed execution, remote registries, multiple storage providers, additional execution backends) shall preserve contract compatibility, pipeline semantics, artifact immutability, and execution determinism without requiring Engine Packs to change their published contracts.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "HIGH",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-008-1",
+          "description": "Future Core enhancements do not require Engine Pack contract changes."
+        }
+      ]
+    },
+    {
+      "id": "A-009",
+      "title": "Single Execution Kernel Assumption",
+      "description": "The long-term vision is a single engineering execution kernel capable of supporting any artifact transformation workflow without modification.",
+      "type": "NON_FUNCTIONAL",
+      "priority": "MEDIUM",
+      "status": "DRAFT",
+      "acceptanceCriteria": [
+        {
+          "id": "AAC-009-1",
+          "description": "The Core architecture supports diverse artifact transformation workflows."
+        }
+      ]
+    }
+  ]
+}

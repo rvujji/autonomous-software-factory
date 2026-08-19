@@ -24,6 +24,7 @@ import {
 } from "@engineering/core/pipeline";
 
 import {
+    ConsoleLogger,
     InMemoryEventPublisher,
     SystemClock,
     UuidIdentifierGenerator,
@@ -151,6 +152,8 @@ implements Platform {
 
         const eventPublisher =
             new InMemoryEventPublisher();
+        
+        const logger = new ConsoleLogger();
 
         //
         // Persistence
@@ -212,6 +215,7 @@ implements Platform {
         const backendRuntime =
             new BackendRuntime(
                 backendRegistry,
+                logger,
             );
 
         //
@@ -221,6 +225,7 @@ implements Platform {
         const engineRuntime =
             new EngineRuntime(
                 engineRegistry,
+                logger,
             );
 
         //
@@ -294,6 +299,7 @@ implements Platform {
             new PipelineRuntime(
                 pipelineRegistry,
                 eventPublisher,
+                logger,
             );
 
         //
@@ -307,6 +313,7 @@ implements Platform {
                 identifierGenerator,
                 clock,
                 eventPublisher,
+                logger,
             );
 
         return new DefaultPlatform(

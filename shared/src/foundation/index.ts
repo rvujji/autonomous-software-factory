@@ -13,3 +13,4 @@ export * from "./runtime-event-type.js";
 export * from "./runtime-event.js";
 export * from "./execution-context.js";
 export * from "./event-publisher.js";
+export * from "./exception.js";

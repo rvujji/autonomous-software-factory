@@ -1,3 +1,9 @@
+import {
+    Identifier,
+} from "../foundation/identifier.js";
+
 export interface PipelineContext {
-    readonly executionId?: string;
+
+    readonly executionId?: Identifier;
+
 }

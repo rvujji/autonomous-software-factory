@@ -7,11 +7,13 @@ import {
 import {
     BackendRegistry,
 } from "./BackendRegistry.js";
+import {Logger,} from "@engineering/shared/foundation";
 
 export class BackendRuntime {
 
     constructor(
         private readonly registry: BackendRegistry,
+        private readonly logger?: Logger,
     ) {}
 
     async register(
@@ -62,17 +64,34 @@ export class BackendRuntime {
         task: BackendTask,
         configuration?: BackendConfiguration,
     ): Promise<BackendResult> {
-
+        this.logger?.debug("Backend execution started.",{backend:backendName,},);
         const backend =
             await this.resolve(
                 backendName,
             );
-
-        return backend.execute(
-            task,
-            configuration,
-        );
-
+        try{        
+            const result = await backend.execute(
+                task,
+                configuration,
+            );
+            this.logger?.debug("Backend execution completed.",
+                {
+                    backend:backendName,
+                    outputKind:result.outputs[0]?.kind,
+                    outputPreview:result.outputs[0]?.kind === "INLINE"? String(result.outputs[0].content).slice(0, 300): undefined,
+                },
+            );
+            return result;
+        }
+        catch (error) {
+            this.logger?.error("Backend execution failed.",
+                {
+                    backend:backendName,
+                    error:error instanceof Error? error.message: String(error),
+                },
+            );
+            throw error;
+        }
     }
 
     async list() {

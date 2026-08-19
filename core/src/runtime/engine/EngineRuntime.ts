@@ -6,11 +6,13 @@ import {
 } from "@engineering/shared/engine";
 
 import { EngineRegistry } from "./EngineRegistry.js";
+import {Logger,PlatformError,} from "@engineering/shared/foundation";
 
 export class EngineRuntime {
 
     constructor(
         private readonly registry: EngineRegistry,
+        private readonly logger?: Logger,
     ) {}
 
     async execute(
@@ -19,6 +21,7 @@ export class EngineRuntime {
         request: EngineRequest,
     ): Promise<EngineResult> {
 
+        this.logger?.debug("Engine execution started.",{engine:engineName,},);
         const engine = await this.registry.get(engineName);
 
         if (!engine) {
@@ -26,11 +29,23 @@ export class EngineRuntime {
                 `Engine '${engineName}' is not registered.`,
             );
         }
-
-        return engine.execute(
-            context,
-            request,
-        );
+        try{
+            const result  = await engine.execute(
+                context,
+                request,
+            );
+            this.logger?.debug("Engine execution completed.",{engine:engineName,},);
+            return result;
+        }
+        catch (error) {
+            this.logger?.error("Engine execution failed.",
+                {
+                    engine:engineName,
+                    error:error instanceof Error? error.message: String(error),
+                },
+            );
+            throw error;
+        }
 
     }
 

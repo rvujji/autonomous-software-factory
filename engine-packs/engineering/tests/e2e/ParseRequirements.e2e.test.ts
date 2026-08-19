@@ -241,7 +241,7 @@ Security requirements must be enforced for authenticated operations.
                 expect(
                     document,
                 ).toContain(
-                    "# Sample Requirements",
+                    "# Engineering Platform",
                 );
 
                 //

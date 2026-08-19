@@ -7,6 +7,7 @@ import {
 
 import {
     EventPublisher,
+    Logger,
 } from "@engineering/shared/foundation";
 
 import { PipelineRegistry } from "./PipelineRegistry.js";
@@ -15,27 +16,18 @@ export class PipelineRuntime {
 
     constructor(
 
-        private readonly registry:
-            PipelineRegistry,
-
-        private readonly events?:
-            EventPublisher,
-
+        private readonly registry:PipelineRegistry,
+        private readonly events?:EventPublisher,
+        private readonly logger?: Logger,
     ) {}
 
     async execute(
-
-        pipelineName:
-            string,
-
-        context:
-            PipelineContext,
-
-        request:
-            PipelineRequest,
+        pipelineName:string,
+        context:PipelineContext,
+        request:PipelineRequest,
 
     ): Promise<PipelineResult> {
-
+        this.logger?.debug("Pipeline execution started.",{pipeline:pipelineName,},);
         const pipeline =
             await this.registry.get(
                 pipelineName,
@@ -112,12 +104,18 @@ export class PipelineRuntime {
                 },
 
             });
-
+            this.logger?.debug("Pipeline execution completed.",{pipeline:pipelineName,},);
             return result;
 
         }
         catch (error) {
-
+            this.logger?.error("Pipeline execution failed.",
+                {
+                    pipeline:pipelineName,
+                    executionId:context.executionId,
+                    error:error instanceof Error? error.message: String(error),
+                },
+            );
             this.events?.publish({
 
                 type:

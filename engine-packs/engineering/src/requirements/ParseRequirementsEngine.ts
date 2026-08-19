@@ -77,6 +77,21 @@ implements Engine {
 
         }
 
+        const requirementTypes =
+            Object.values(
+                RequirementType,
+            ).join(", ");
+
+        const requirementPriorities =
+            Object.values(
+                RequirementPriority,
+            ).join(", ");
+
+        const requirementStatuses =
+            Object.values(
+                RequirementStatus,
+            ).join(", ");
+            
         const task: BackendTask = {
 
             contractVersion:
@@ -132,7 +147,17 @@ implements Engine {
 
                 "Do not return explanatory text.",
 
-                "Use the exact enum values defined by the requested output contract.",
+                `Requirement type MUST be exactly one of: ${requirementTypes}.`,
+
+                `Requirement priority MUST be exactly one of: ${requirementPriorities}.`,
+
+                `Requirement status MUST be exactly one of: ${requirementStatuses}.`,
+
+                "Do not use values outside the enumerated values above.",
+
+                "Every functional requirement must use the functional requirement type.",
+
+                "Every non-functional requirement must use the non-functional requirement type.",
 
             ],
 
@@ -443,7 +468,7 @@ implements Engine {
             value,
             path,
         );
-
+        // console.log("[PARSE] invalid requirement type:",value.type,);
         const type =
             this.requiredEnum(
                 value,
@@ -452,15 +477,6 @@ implements Engine {
                 path,
             );
 
-        if (
-            type !== expectedType
-        ) {
-
-            throw new Error(
-                `${path}.type must be '${expectedType}'.`,
-            );
-
-        }
 
         const acceptanceCriteria =
             value.acceptanceCriteria;
@@ -500,15 +516,13 @@ implements Engine {
                     path,
                 ),
 
-            type,
+            type: type,
 
             priority:
                 this.requiredEnum(
                     value,
                     "priority",
-                    Object.values(
-                        RequirementPriority,
-                    ),
+                    Object.values(RequirementPriority,),
                     path,
                 ),
 
@@ -516,12 +530,9 @@ implements Engine {
                 this.requiredEnum(
                     value,
                     "status",
-                    Object.values(
-                        RequirementStatus,
-                    ),
+                    Object.values(RequirementStatus,),
                     path,
-                ),
-
+                )as RequirementStatus,
             acceptanceCriteria:
                 acceptanceCriteria.map(
                     (criterion, index) =>

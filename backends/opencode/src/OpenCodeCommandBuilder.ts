@@ -172,6 +172,22 @@ export class OpenCodeCommandBuilder {
                     `- ${input.name}`,
                 );
 
+                if (
+                    input.source.kind === "CONTENT"
+                ) {
+
+                    lines.push("");
+
+                    lines.push(
+                        "Content:",
+                    );
+
+                    lines.push(
+                        String(input.source.content),
+                    );
+
+                }
+
             }
 
             lines.push("");
