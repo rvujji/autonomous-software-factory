@@ -8,3 +8,5 @@ export * from "./RequirementType.js";
 export * from "./Requirements.js";
 export * from "./RequirementSource.js";
 export * from "./RequirementSet.js";
+export * from "./RequirementCandidate.js";
+export * from "./RequirementProvenance.js";

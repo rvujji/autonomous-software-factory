@@ -1,20 +1,23 @@
-import { Conflict } from "./Conflict.js";
-import { Decision } from "./Decision.js";
-import { Finding } from "./Finding.js";
-import { ResearchGap } from "./ResearchGap.js";
+import { KnowledgeFinding } from "./KnowledgeFinding.js";
 
 export interface KnowledgeSynthesis {
 
-    readonly projectName: string;
+    readonly id: string;
 
-    readonly version: string;
+    readonly topic: string;
 
-    readonly findings: readonly Finding[];
+    readonly summary: string;
 
-    readonly decisions: readonly Decision[];
+    readonly findings:
+        readonly KnowledgeFinding[];
 
-    readonly gaps: readonly ResearchGap[];
+    readonly conclusions:
+        readonly string[];
 
-    readonly conflicts: readonly Conflict[];
+    readonly uncertainties:
+        readonly string[];
+
+    readonly recommendations:
+        readonly string[];
 
 }

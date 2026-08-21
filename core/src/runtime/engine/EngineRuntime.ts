@@ -6,32 +6,25 @@ import {
 } from "@engineering/shared/engine";
 
 import {
-    PlatformError,
     Logger,
-} from "@engineering/shared";
+    PlatformError,
+} from "@engineering/shared/foundation";
 
-import { EngineRegistry } from "./EngineRegistry.js";
+import {
+    EngineRegistry,
+} from "./EngineRegistry.js";
 
 export class EngineRuntime {
 
     constructor(
-
-        private readonly registry:
-            EngineRegistry,
-
-        private readonly logger?:
-            Logger,
-
+        private readonly registry: EngineRegistry,
+        private readonly logger?: Logger,
     ) {}
 
     async execute(
-
         engineName: string,
-
         context: EngineContext,
-
         request: EngineRequest,
-
     ): Promise<EngineResult> {
 
         const startedAt =
@@ -45,15 +38,18 @@ export class EngineRuntime {
             },
         );
 
-        const engine =
-            await this.registry.get(
-                engineName,
-            );
+        let engine: Engine;
 
-        if (!engine) {
+        try {
 
-            const error =
-                new PlatformError(
+            const resolved =
+                await this.registry.get(
+                    engineName,
+                );
+
+            if (!resolved) {
+
+                throw new PlatformError(
                     "ENGINE_NOT_FOUND",
                     `Engine '${engineName}' is not registered.`,
                     {
@@ -61,14 +57,67 @@ export class EngineRuntime {
                             "EngineRuntime",
 
                         details: {
-
                             engine:
                                 engineName,
-
                         },
                     },
                 );
 
+            }
+
+            engine =
+                resolved;
+
+        }
+        catch (error) {
+            console.log(
+                "[ENGINE DEBUG] raw error:",
+                error,
+            );
+
+            console.log(
+                "[ENGINE DEBUG] raw error message:",
+                error instanceof Error
+                    ? error.message
+                    : String(error),
+            );
+
+            const platformError =
+                error instanceof PlatformError
+                    ? error
+                    : new PlatformError(
+                        "ENGINE_EXECUTION_FAILED",
+                        error instanceof Error
+                            ? error.message
+                            : `Engine '${engineName}' execution failed.`,
+                        {
+                            component:
+                                "EngineRuntime",
+
+                            details: {
+                                engine:
+                                    engineName,
+                            },
+
+                            cause:
+                                error,
+                        },
+                    );
+
+            console.log(
+                "[ENGINE DEBUG] platform error:",
+                {
+                    code:
+                        platformError.code,
+
+                    message:
+                        platformError.message,
+
+                    cause:
+                        platformError.cause,
+                },
+            );
+                    
             this.logger?.error(
                 "Engine resolution failed.",
                 {
@@ -76,15 +125,14 @@ export class EngineRuntime {
                         engineName,
 
                     code:
-                        error.code,
+                        platformError.code,
 
                     error:
-                        error.message,
-
+                        platformError.message,
                 },
             );
 
-            throw error;
+            throw platformError;
 
         }
 
@@ -103,8 +151,11 @@ export class EngineRuntime {
                         engineName,
 
                     durationMs:
-                        Date.now() - startedAt,
+                        Date.now() -
+                        startedAt,
 
+                    artifactCount:
+                        result.output.artifacts?.length ?? 0,
                 },
             );
 
@@ -113,20 +164,47 @@ export class EngineRuntime {
         }
         catch (error) {
 
+            const platformError =
+                error instanceof PlatformError
+                    ? error
+                    : new PlatformError(
+                        "ENGINE_EXECUTION_FAILED",
+                        error instanceof Error
+                            ? error.message
+                            : `Engine '${engineName}' execution failed.`,
+                        {
+                            component:
+                                "EngineRuntime",
+
+                            details: {
+                                engine:
+                                    engineName,
+                            },
+
+                            cause:
+                                error,
+                        },
+                    );
+
             this.logger?.error(
                 "Engine execution failed.",
                 {
                     engine:
                         engineName,
 
+                    code:
+                        platformError.code,
+
                     error:
-                        error instanceof Error
-                            ? error.message
-                            : String(error),
+                        platformError.message,
+
+                    durationMs:
+                        Date.now() -
+                        startedAt,
                 },
             );
 
-            throw error;
+            throw platformError;
 
         }
 

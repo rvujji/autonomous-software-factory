@@ -205,7 +205,7 @@ implements Platform {
                 identifierGenerator,
 
                 clock,
-
+                logger,
             );
 
         //

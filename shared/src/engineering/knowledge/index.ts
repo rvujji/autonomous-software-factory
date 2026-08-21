@@ -5,3 +5,5 @@ export * from "./Decision.js";
 export * from "./ResearchGap.js";
 export * from "./Conflict.js";
 export * from "./KnowledgeSynthesis.js";
+export * from "./ResearchSource.js";
+export * from "./KnowledgeFinding.js";

@@ -3,8 +3,16 @@ import {
     StartExecutionRequest,
 } from "@engineering/shared/execution";
 
-import { Clock } from "../foundation/Clock.js";
-import { EventPublisher, IdentifierGenerator, Logger } from "@engineering/shared/foundation";
+import {
+    Clock,
+} from "../foundation/Clock.js";
+
+import {
+    EventPublisher,
+    IdentifierGenerator,
+    Logger,
+    PlatformError,
+} from "@engineering/shared/foundation";
 
 import { PipelineRuntime } from "../pipeline/PipelineRuntime.js";
 import { ExecutionRepository } from "./ExecutionRepository.js";
@@ -13,31 +21,59 @@ export class ExecutionRuntime {
 
     constructor(
 
-        private readonly pipelineRuntime: PipelineRuntime,
-        private readonly repository: ExecutionRepository,
-        private readonly identifierGenerator: IdentifierGenerator,
-        private readonly clock: Clock,
-        private readonly events?: EventPublisher,
-        private readonly logger?: Logger,
+        private readonly pipelineRuntime:
+            PipelineRuntime,
+
+        private readonly repository:
+            ExecutionRepository,
+
+        private readonly identifierGenerator:
+            IdentifierGenerator,
+
+        private readonly clock:
+            Clock,
+
+        private readonly events?:
+            EventPublisher,
+
+        private readonly logger?:
+            Logger,
 
     ) {}
 
     async start(
         request: StartExecutionRequest,
     ): Promise<Execution> {
-        this.logger?.debug("Execution started.",{},);
+
         const startedAt =
             this.clock.now();
 
+        const executionId =
+            await this.identifierGenerator.generate();
+
+        this.logger?.debug(
+            "Execution started.",
+            {
+                executionId,
+
+                pipeline:
+                    request.pipeline,
+            },
+        );
+
         let execution: Execution = {
 
-            id: await this.identifierGenerator.generate(),
+            id:
+                executionId,
 
-            pipeline: request.pipeline,
+            pipeline:
+                request.pipeline,
 
-            state: "PENDING",
+            state:
+                "PENDING",
 
-            artifacts: request.artifacts,
+            artifacts:
+                request.artifacts,
 
             metadata: {
 
@@ -46,40 +82,64 @@ export class ExecutionRuntime {
             },
 
         };
+
         this.events?.publish({
-            type:"EXECUTION_STARTED",
-            timestamp:startedAt,
-            component:"ExecutionRuntime",
-            executionId:execution.id,
+
+            type:
+                "EXECUTION_STARTED",
+
+            timestamp:
+                startedAt,
+
+            component:
+                "ExecutionRuntime",
+
+            executionId:
+                execution.id,
+
             data: {
+
                 pipeline:
                     execution.pipeline,
+
             },
+
         });
-
-        await this.repository.create(
-            execution,
-        );
-
-        execution = {
-
-            ...execution,
-
-            state: "RUNNING",
-
-        };
-
-        await this.repository.update(
-            execution,
-        );
 
         try {
 
+            await this.repository.create(
+                execution,
+            );
+
+            execution = {
+
+                ...execution,
+
+                state:
+                    "RUNNING",
+
+            };
+
+            await this.repository.update(
+                execution,
+            );
+
             const result =
                 await this.pipelineRuntime.execute(
+
                     request.pipeline,
-                    {executionId:execution.id,},
-                    {artifacts: execution.artifacts,},
+
+                    {
+                        executionId:
+                            execution.id,
+                    },
+
+                    {
+                        artifacts:
+                            execution.artifacts,
+                    },
+
                 );
 
             const completedAt =
@@ -89,9 +149,11 @@ export class ExecutionRuntime {
 
                 ...execution,
 
-                state: "COMPLETED",
+                state:
+                    "COMPLETED",
 
-                artifacts: result.artifacts,
+                artifacts:
+                    result.artifacts,
 
                 metadata: {
 
@@ -110,35 +172,84 @@ export class ExecutionRuntime {
             await this.repository.update(
                 execution,
             );
+
             this.events?.publish({
-                type:"EXECUTION_COMPLETED",
-                timestamp:completedAt,
-                component:"ExecutionRuntime",
-                executionId:execution.id,
+
+                type:
+                    "EXECUTION_COMPLETED",
+
+                timestamp:
+                    completedAt,
+
+                component:
+                    "ExecutionRuntime",
+
+                executionId:
+                    execution.id,
+
                 data: {
+
                     pipeline:
                         execution.pipeline,
+
                 },
+
             });
-            this.logger?.debug("Execution completed.",{},);
+
+            this.logger?.debug(
+                "Execution completed.",
+                {
+                    executionId:
+                        execution.id,
+
+                    pipeline:
+                        execution.pipeline,
+
+                    durationMs:
+                        execution.metadata.durationMs,
+
+                    artifactCount:
+                        execution.artifacts.length,
+                },
+            );
+
             return execution;
 
         }
         catch (error) {
-            this.logger?.error("Execution failed.",
-                {
-                    executionId:execution.id,
-                    pipeline:execution.pipeline,
-                    error:error instanceof Error? error.message: String(error),
-                },
-            );
-            const completedAt =this.clock.now();
+
+            const platformError =
+                error instanceof PlatformError
+                    ? error
+                    : new PlatformError(
+                        "EXECUTION_FAILED",
+                        `Execution '${execution.id}' failed.`,
+                        {
+                            component:
+                                "ExecutionRuntime",
+
+                            details: {
+                                executionId:
+                                    execution.id,
+
+                                pipeline:
+                                    execution.pipeline,
+                            },
+
+                            cause:
+                                error,
+                        },
+                    );
+
+            const completedAt =
+                this.clock.now();
 
             execution = {
 
                 ...execution,
 
-                state: "FAILED",
+                state:
+                    "FAILED",
 
                 metadata: {
 
@@ -159,17 +270,52 @@ export class ExecutionRuntime {
             );
 
             this.events?.publish({
-                type:"EXECUTION_FAILED",
-                timestamp:completedAt,
-                component:"ExecutionRuntime",
-                executionId:execution.id,
+
+                type:
+                    "EXECUTION_FAILED",
+
+                timestamp:
+                    completedAt,
+
+                component:
+                    "ExecutionRuntime",
+
+                executionId:
+                    execution.id,
+
                 data: {
+
                     pipeline:
                         execution.pipeline,
+
+                    code:
+                        platformError.code,
+
                 },
+
             });
 
-            throw error;
+            this.logger?.error(
+                "Execution failed.",
+                {
+                    executionId:
+                        execution.id,
+
+                    pipeline:
+                        execution.pipeline,
+
+                    code:
+                        platformError.code,
+
+                    error:
+                        platformError.message,
+
+                    durationMs:
+                        execution.metadata.durationMs,
+                },
+            );
+
+            throw platformError;
 
         }
 

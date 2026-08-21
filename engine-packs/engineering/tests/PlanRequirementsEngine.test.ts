@@ -14,7 +14,7 @@ describe(
     () => {
 
         it(
-            "creates a requirements plan from validated requirements",
+            "creates a requirements plan from a validated requirement set",
             async () => {
 
                 const engine =
@@ -40,7 +40,7 @@ describe(
                                             "Validated Requirements",
 
                                         type:
-                                            "VALIDATED_REQUIREMENTS",
+                                            "VALIDATED_REQUIREMENT_SET",
 
                                         version:
                                             1,
@@ -68,6 +68,8 @@ describe(
                                             functionalRequirements: [],
 
                                             nonFunctionalRequirements: [],
+
+                                            candidates: [],
 
                                             constraints: [
 
@@ -144,7 +146,7 @@ describe(
                         1,
 
                     type:
-                        "VALIDATED_REQUIREMENTS",
+                        "VALIDATED_REQUIREMENT_SET",
 
                 });
 
@@ -152,7 +154,7 @@ describe(
         );
 
         it(
-            "rejects non-validated requirements input",
+            "rejects non-validated requirement set input",
             async () => {
 
                 const engine =
@@ -209,7 +211,7 @@ describe(
                     ),
 
                 ).rejects.toThrow(
-                    "Expected VALIDATED_REQUIREMENTS artifact",
+                    "Expected VALIDATED_REQUIREMENT_SET artifact",
                 );
 
             },

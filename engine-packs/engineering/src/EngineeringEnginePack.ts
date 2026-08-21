@@ -24,27 +24,24 @@ import {
 
 import {
     ParseRequirementsEngine,
-} from "./requirements/ParseRequirementsEngine.js";
-
-import {
     ValidateRequirementsEngine,
-} from "./requirements/ValidateRequirementsEngine.js";
+    RepairRequirementsEngine,
+    PlanRequirementsEngine,
+    BuildRequirementsGraphEngine,
+    GenerateRequirementsDocumentEngine,
+    ExtractKnowledgeEngine,
+    SynthesizeKnowledgeEngine,
+    RefineRequirementsEngine,
+    ValidateRequirementSetEngine,
+} from "./requirements/index.js";
 
 import {
     EngineeringPipeline,
 } from "./pipeline/EngineeringPipeline.js";
+
 import {
-    RepairRequirementsEngine,
-} from "./requirements/RepairRequirementsEngine.js";
-import {
-    PlanRequirementsEngine,
-} from "./requirements/PlanRequirementsEngine.js";
-import {
-    BuildRequirementsGraphEngine,
-} from "./requirements/BuildRequirementsGraphEngine.js";
-import {
-    GenerateRequirementsDocumentEngine,
-} from "./requirements/GenerateRequirementsDocumentEngine.js";
+    RequirementsRefinementPipeline,
+} from "./pipeline/RequirementsRefinementPipeline.js";
 
 export class EngineeringEnginePack
 implements EnginePack {
@@ -76,22 +73,57 @@ implements EnginePack {
 
         this.engines = [
 
+            //
+            // Existing requirements flow
+            //
+
             new ParseRequirementsEngine(
                 backends,
             ),
+
             new ValidateRequirementsEngine(),
+
             new RepairRequirementsEngine(
                 backends,
             ),
+
             new PlanRequirementsEngine(),
+
             new BuildRequirementsGraphEngine(),
+
             new GenerateRequirementsDocumentEngine(),
+
+            //
+            // Knowledge → Requirements refinement
+            //
+
+            new ExtractKnowledgeEngine(
+                backends,
+            ),
+
+            new SynthesizeKnowledgeEngine(
+                backends,
+            ),
+
+            new RefineRequirementsEngine(
+                backends,
+            ),
+
+            new ValidateRequirementSetEngine(),
 
         ];
 
         this.pipelines = [
 
             new EngineeringPipeline(
+
+                engines,
+
+                artifacts,
+
+            ),
+
+            new RequirementsRefinementPipeline(
 
                 engines,
 

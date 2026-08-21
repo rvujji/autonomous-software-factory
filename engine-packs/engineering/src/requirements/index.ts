@@ -4,3 +4,7 @@ export * from "./RepairRequirementsEngine.js";
 export * from "./PlanRequirementsEngine.js";
 export * from "./BuildRequirementsGraphEngine.js";
 export * from "./GenerateRequirementsDocumentEngine.js";
+export * from "./ExtractKnowledgeEngine.js";
+export * from "./SynthesizeKnowledgeEngine.js";
+export * from "./RefineRequirementsEngine.js";
+export * from "./ValidateRequirementSetEngine.js";

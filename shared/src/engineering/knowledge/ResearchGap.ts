@@ -2,16 +2,17 @@ export interface ResearchGap {
 
     readonly id: string;
 
-    readonly question: string;
+    readonly topic: string;
 
-    readonly reason: string;
+    readonly description: string;
 
     readonly importance:
-        "LOW" |
-        "MEDIUM" |
+        "CRITICAL" |
         "HIGH" |
-        "CRITICAL";
+        "MEDIUM" |
+        "LOW";
 
-    readonly affectedFindingIds: readonly string[];
+    readonly recommendedResearch:
+        string;
 
 }

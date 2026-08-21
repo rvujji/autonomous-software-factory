@@ -1,7 +1,7 @@
 import { Assumption } from "./Assumption.js";
 import { Constraint } from "./Constraint.js";
+import { RequirementCandidate } from "./RequirementCandidate.js";
 import { Requirement } from "./Requirement.js";
-import { RequirementSource } from "./RequirementSource.js";
 
 export interface RequirementSet {
 
@@ -15,13 +15,13 @@ export interface RequirementSet {
     readonly nonFunctionalRequirements:
         readonly Requirement[];
 
+    readonly candidates:
+        readonly RequirementCandidate[];
+
     readonly constraints:
         readonly Constraint[];
 
     readonly assumptions:
         readonly Assumption[];
-
-    readonly sources:
-        readonly RequirementSource[];
 
 }

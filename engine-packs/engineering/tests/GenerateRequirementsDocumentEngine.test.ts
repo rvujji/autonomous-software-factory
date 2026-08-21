@@ -43,7 +43,7 @@ describe(
                                             "Validated Requirements",
 
                                         type:
-                                            "VALIDATED_REQUIREMENTS",
+                                            "VALIDATED_REQUIREMENT_SET",
 
                                         version:
                                             1,
@@ -109,6 +109,8 @@ describe(
                                             ],
 
                                             nonFunctionalRequirements: [],
+
+                                            candidates: [],
 
                                             constraints: [],
 

@@ -4,7 +4,7 @@ import {
 } from "@engineering/shared/artifact";
 
 import {
-    Requirements,
+    RequirementSet,
     Requirement,
 } from "@engineering/shared/engineering";
 
@@ -61,23 +61,23 @@ implements Engine {
 
         if (
             inputArtifact.type !==
-            "VALIDATED_REQUIREMENTS"
+            "VALIDATED_REQUIREMENT_SET"
         ) {
 
             throw new Error(
-                `Expected VALIDATED_REQUIREMENTS artifact but received '${inputArtifact.type}'.`,
+                `Expected VALIDATED_REQUIREMENT_SET artifact but received '${inputArtifact.type}'.`,
             );
 
         }
 
-        const requirements =
-            this.requireRequirements(
+        const requirementSet =
+            this.requireRequirementSet(
                 inputArtifact.payload,
             );
 
         const document =
             this.generateDocument(
-                requirements,
+                requirementSet,
             );
 
         const artifact: Artifact = {
@@ -145,9 +145,9 @@ implements Engine {
 
     }
 
-    private requireRequirements(
+    private requireRequirementSet(
         payload: unknown,
-    ): Requirements {
+    ): RequirementSet {
 
         if (
             typeof payload !== "object" ||
@@ -156,7 +156,7 @@ implements Engine {
         ) {
 
             throw new Error(
-                "Validated requirements payload must be an object.",
+                "Validated requirement set payload must be an object.",
             );
 
         }
@@ -170,7 +170,7 @@ implements Engine {
         ) {
 
             throw new Error(
-                "Requirements projectName is required.",
+                "Requirement set projectName is required.",
             );
 
         }
@@ -181,7 +181,7 @@ implements Engine {
         ) {
 
             throw new Error(
-                "Requirements version is required.",
+                "Requirement set version is required.",
             );
 
         }
@@ -193,7 +193,7 @@ implements Engine {
         ) {
 
             throw new Error(
-                "Requirements functionalRequirements must be an array.",
+                "Requirement set functionalRequirements must be an array.",
             );
 
         }
@@ -205,7 +205,19 @@ implements Engine {
         ) {
 
             throw new Error(
-                "Requirements nonFunctionalRequirements must be an array.",
+                "Requirement set nonFunctionalRequirements must be an array.",
+            );
+
+        }
+
+        if (
+            !Array.isArray(
+                value.candidates,
+            )
+        ) {
+
+            throw new Error(
+                "Requirement set candidates must be an array.",
             );
 
         }
@@ -217,7 +229,7 @@ implements Engine {
         ) {
 
             throw new Error(
-                "Requirements constraints must be an array.",
+                "Requirement set constraints must be an array.",
             );
 
         }
@@ -229,29 +241,29 @@ implements Engine {
         ) {
 
             throw new Error(
-                "Requirements assumptions must be an array.",
+                "Requirement set assumptions must be an array.",
             );
 
         }
 
-        return value as unknown as Requirements;
+        return value as unknown as RequirementSet;
 
     }
 
     private generateDocument(
-        requirements: Requirements,
+        requirementSet: RequirementSet,
     ): string {
 
         const lines: string[] = [];
 
         lines.push(
-            `# ${requirements.projectName}`,
+            `# ${requirementSet.projectName}`,
         );
 
         lines.push("");
 
         lines.push(
-            `**Requirements Version:** ${requirements.version}`,
+            `**Requirements Version:** ${requirementSet.version}`,
         );
 
         lines.push("");
@@ -264,7 +276,7 @@ implements Engine {
 
         this.appendRequirements(
             lines,
-            requirements.functionalRequirements,
+            requirementSet.functionalRequirements,
         );
 
         lines.push(
@@ -275,7 +287,7 @@ implements Engine {
 
         this.appendRequirements(
             lines,
-            requirements.nonFunctionalRequirements,
+            requirementSet.nonFunctionalRequirements,
         );
 
         lines.push(
@@ -285,7 +297,7 @@ implements Engine {
         lines.push("");
 
         if (
-            requirements.constraints.length === 0
+            requirementSet.constraints.length === 0
         ) {
 
             lines.push(
@@ -297,7 +309,7 @@ implements Engine {
 
             for (
                 const constraint
-                of requirements.constraints
+                of requirementSet.constraints
             ) {
 
                 lines.push(
@@ -317,7 +329,7 @@ implements Engine {
         lines.push("");
 
         if (
-            requirements.assumptions.length === 0
+            requirementSet.assumptions.length === 0
         ) {
 
             lines.push(
@@ -329,12 +341,70 @@ implements Engine {
 
             for (
                 const assumption
-                of requirements.assumptions
+                of requirementSet.assumptions
             ) {
 
                 lines.push(
                     `- **${assumption.id}:** ${assumption.description}`,
                 );
+
+            }
+
+        }
+
+        lines.push("");
+
+        lines.push(
+            "## Requirement Candidates",
+        );
+
+        lines.push("");
+
+        if (
+            requirementSet.candidates.length === 0
+        ) {
+
+            lines.push(
+                "None.",
+            );
+
+        }
+        else {
+
+            for (
+                const candidate
+                of requirementSet.candidates
+            ) {
+
+                lines.push(
+                    `### ${candidate.id} — ${candidate.title}`,
+                );
+
+                lines.push("");
+
+                lines.push(
+                    candidate.description,
+                );
+
+                lines.push("");
+
+                lines.push(
+                    `- **Type:** ${candidate.type}`,
+                );
+
+                lines.push(
+                    `- **Priority:** ${candidate.priority}`,
+                );
+
+                lines.push(
+                    `- **Confidence:** ${candidate.confidence}`,
+                );
+
+                lines.push(
+                    `- **Rationale:** ${candidate.rationale}`,
+                );
+
+                lines.push("");
 
             }
 
