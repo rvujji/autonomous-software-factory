@@ -6,3 +6,5 @@ export * from "./RequirementPriority.js";
 export * from "./RequirementStatus.js";
 export * from "./RequirementType.js";
 export * from "./Requirements.js";
+export * from "./RequirementSource.js";
+export * from "./RequirementSet.js";

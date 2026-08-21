@@ -31,9 +31,12 @@ import {
     BackendTask,
 } from "@engineering/backend-shared";
 
+import {Logger,PlatformError,} from "@engineering/shared/foundation";
+
 export class ParseRequirementsEngine
 implements Engine {
 
+    private readonly logger?: Logger;
     readonly specification: EngineSpecification = {
 
         name:
@@ -389,42 +392,230 @@ implements Engine {
         const trimmed =
             text.trim();
 
+        this.logger?.debug(
+            "Requirements JSON extraction started.",
+            {
+                inputLength:
+                    text.length,
+
+                trimmedLength:
+                    trimmed.length,
+
+                inputPreview:
+                    trimmed.slice(0, 500),
+
+                inputTail:
+                    trimmed.slice(-500),
+            },
+        );
+
+        //
+        // Remove Markdown code fences if present.
+        //
+
+        let candidate =
+            trimmed;
+
         if (
-            trimmed.startsWith("```")
+            candidate.startsWith("```")
         ) {
 
-            const withoutOpeningFence =
-                trimmed.replace(
+            candidate =
+                candidate.replace(
                     /^```(?:json)?\s*/i,
                     "",
                 );
 
-            return withoutOpeningFence.replace(
-                /\s*```$/,
-                "",
-            ).trim();
+            candidate =
+                candidate.replace(
+                    /\s*```$/,
+                    "",
+                ).trim();
 
-        }
-
-        const objectStart =
-            trimmed.indexOf("{");
-
-        const objectEnd =
-            trimmed.lastIndexOf("}");
-
-        if (
-            objectStart >= 0 &&
-            objectEnd > objectStart
-        ) {
-
-            return trimmed.slice(
-                objectStart,
-                objectEnd + 1,
+            this.logger?.debug(
+                "Requirements JSON Markdown fence removed.",
+                {
+                    candidateLength:
+                        candidate.length,
+                },
             );
 
         }
 
-        return trimmed;
+        //
+        // Locate the beginning of the JSON object.
+        //
+
+        const objectStart =
+            candidate.indexOf("{");
+
+        if (
+            objectStart < 0
+        ) {
+
+            this.logger?.error(
+                "Requirements JSON object start not found.",
+                {
+                    candidateLength:
+                        candidate.length,
+
+                    candidatePreview:
+                        candidate.slice(0, 500),
+                },
+            );
+
+            return candidate;
+
+        }
+
+        //
+        // Extract exactly one balanced JSON object.
+        //
+        // This avoids relying on lastIndexOf("}"),
+        // which can accidentally include trailing content.
+        //
+
+        let depth = 0;
+        let inString = false;
+        let escaped = false;
+
+        for (
+            let index = objectStart;
+            index < candidate.length;
+            index++
+        ) {
+
+            const character =
+                candidate[index];
+
+            if (inString) {
+
+                if (escaped) {
+
+                    escaped =
+                        false;
+
+                    continue;
+
+                }
+
+                if (
+                    character === "\\"
+                ) {
+
+                    escaped =
+                        true;
+
+                    continue;
+
+                }
+
+                if (
+                    character === "\""
+                ) {
+
+                    inString =
+                        false;
+
+                }
+
+                continue;
+
+            }
+
+            if (
+                character === "\""
+            ) {
+
+                inString =
+                    true;
+
+                continue;
+
+            }
+
+            if (
+                character === "{"
+            ) {
+
+                depth++;
+
+                continue;
+
+            }
+
+            if (
+                character === "}"
+            ) {
+
+                depth--;
+
+                if (
+                    depth === 0
+                ) {
+
+                    const json =
+                        candidate.slice(
+                            objectStart,
+                            index + 1,
+                        );
+
+                    this.logger?.debug(
+                        "Requirements JSON object extracted.",
+                        {
+                            objectStart,
+
+                            objectEnd:
+                                index,
+
+                            jsonLength:
+                                json.length,
+
+                            trailingLength:
+                                candidate.length -
+                                (index + 1),
+
+                            jsonPreview:
+                                json.slice(0, 500),
+
+                            jsonTail:
+                                json.slice(-500),
+
+                            trailingPreview:
+                                candidate
+                                    .slice(index + 1)
+                                    .trim()
+                                    .slice(0, 500),
+                        },
+                    );
+
+                    return json;
+
+                }
+
+            }
+
+        }
+
+        this.logger?.error(
+            "Requirements JSON object was not balanced.",
+            {
+                objectStart,
+
+                candidateLength:
+                    candidate.length,
+
+                remainingDepth:
+                    depth,
+
+                candidateTail:
+                    candidate.slice(-500),
+            },
+        );
+
+        throw new Error(
+            "Requirements parser backend returned an incomplete JSON object.",
+        );
 
     }
 

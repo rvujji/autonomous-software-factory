@@ -12,6 +12,7 @@ import { FakePipeline } from "../fakes/FakePipeline.js";
 import { ThrowingPipeline } from "../fakes/ThrowingPipeline.js";
 import { FakeClock } from "../fakes/FakeClock.js";
 import { FakeIdentifierGenerator } from "../fakes/FakeIdentifierGenerator.js";
+import {InMemoryEventPublisher,} from "../../src/runtime/foundation/InMemoryEventPublisher.js";
 
 describe("ExecutionRuntime", () => {
 
@@ -48,9 +49,13 @@ describe("ExecutionRuntime", () => {
         const registry =
             new InMemoryPipelineRegistry();
 
+        const events =
+            new InMemoryEventPublisher();
+
         await registry.register(
             new FakePipeline(),
         );
+
 
         const runtime =
             new ExecutionRuntime(
@@ -64,6 +69,8 @@ describe("ExecutionRuntime", () => {
                 new FakeIdentifierGenerator(),
 
                 new FakeClock(),
+
+                events,
 
             );
 
@@ -103,6 +110,12 @@ describe("ExecutionRuntime", () => {
             new ThrowingPipeline(),
         );
 
+        const repository =
+            new InMemoryExecutionRepository();
+
+        const events =
+            new InMemoryEventPublisher();
+
         const runtime =
             new ExecutionRuntime(
 
@@ -110,11 +123,13 @@ describe("ExecutionRuntime", () => {
                     registry,
                 ),
 
-                new InMemoryExecutionRepository(),
+                repository,
 
                 new FakeIdentifierGenerator(),
 
                 new FakeClock(),
+
+                events,
 
             );
 
@@ -133,6 +148,67 @@ describe("ExecutionRuntime", () => {
             }),
 
         ).rejects.toThrow();
+
+        //
+        // Execution must be persisted as FAILED
+        //
+
+        const execution =
+            await repository.get(
+                "artifact-001",
+            );
+
+        expect(
+            execution,
+        ).toBeDefined();
+
+        expect(
+            execution?.state,
+        ).toBe(
+            "FAILED",
+        );
+
+        expect(
+            execution?.metadata.completedAt,
+        ).toBeInstanceOf(
+            Date,
+        );
+
+        expect(
+            execution?.metadata.durationMs,
+        ).toBeGreaterThanOrEqual(
+            0,
+        );
+
+        //
+        // Execution failure event must be published
+        //
+
+        const publishedEvents =
+            events.list();
+
+        const failedEvent =
+            publishedEvents.find(
+                event =>
+                    event.type ===
+                    "EXECUTION_FAILED",
+            );
+
+        expect(
+            failedEvent,
+        ).toBeDefined();
+
+        expect(
+            failedEvent?.executionId,
+        ).toBe(
+            "artifact-001",
+        );
+
+        expect(
+            failedEvent?.component,
+        ).toBe(
+            "ExecutionRuntime",
+        );
 
     });
 

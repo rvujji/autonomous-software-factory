@@ -64,7 +64,7 @@ describe(
                     expect(
                         result.artifacts[0]?.type,
                     ).toBe(
-                        "VALIDATED_REQUIREMENTS",
+                        "REQUIREMENTS_DOCUMENT",
                     );
 
             },

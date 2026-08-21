@@ -25,8 +25,8 @@ export class OpenCodeCommandBuilder {
 
         const argumentsList: string[] = [
 
+            ...this.configuration.arguments,
             "run",
-
             prompt,
 
         ];

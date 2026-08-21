@@ -1,0 +1,25 @@
+export enum KnowledgeType {
+
+    MARKET = "MARKET",
+
+    FINANCIAL = "FINANCIAL",
+
+    PRODUCT = "PRODUCT",
+
+    USER = "USER",
+
+    BEHAVIORAL = "BEHAVIORAL",
+
+    DOMAIN = "DOMAIN",
+
+    TECHNICAL = "TECHNICAL",
+
+    COMPETITIVE = "COMPETITIVE",
+
+    STRATEGIC = "STRATEGIC",
+
+    RESEARCH = "RESEARCH",
+
+    OTHER = "OTHER",
+
+}

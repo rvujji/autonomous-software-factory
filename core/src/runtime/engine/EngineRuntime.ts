@@ -5,46 +5,129 @@ import {
     EngineResult,
 } from "@engineering/shared/engine";
 
+import {
+    PlatformError,
+    Logger,
+} from "@engineering/shared";
+
 import { EngineRegistry } from "./EngineRegistry.js";
-import {Logger,PlatformError,} from "@engineering/shared/foundation";
 
 export class EngineRuntime {
 
     constructor(
-        private readonly registry: EngineRegistry,
-        private readonly logger?: Logger,
+
+        private readonly registry:
+            EngineRegistry,
+
+        private readonly logger?:
+            Logger,
+
     ) {}
 
     async execute(
+
         engineName: string,
+
         context: EngineContext,
+
         request: EngineRequest,
+
     ): Promise<EngineResult> {
 
-        this.logger?.debug("Engine execution started.",{engine:engineName,},);
-        const engine = await this.registry.get(engineName);
+        const startedAt =
+            Date.now();
+
+        this.logger?.debug(
+            "Engine execution started.",
+            {
+                engine:
+                    engineName,
+            },
+        );
+
+        const engine =
+            await this.registry.get(
+                engineName,
+            );
 
         if (!engine) {
-            throw new Error(
-                `Engine '${engineName}' is not registered.`,
-            );
-        }
-        try{
-            const result  = await engine.execute(
-                context,
-                request,
-            );
-            this.logger?.debug("Engine execution completed.",{engine:engineName,},);
-            return result;
-        }
-        catch (error) {
-            this.logger?.error("Engine execution failed.",
+
+            const error =
+                new PlatformError(
+                    "ENGINE_NOT_FOUND",
+                    `Engine '${engineName}' is not registered.`,
+                    {
+                        component:
+                            "EngineRuntime",
+
+                        details: {
+
+                            engine:
+                                engineName,
+
+                        },
+                    },
+                );
+
+            this.logger?.error(
+                "Engine resolution failed.",
                 {
-                    engine:engineName,
-                    error:error instanceof Error? error.message: String(error),
+                    engine:
+                        engineName,
+
+                    code:
+                        error.code,
+
+                    error:
+                        error.message,
+
                 },
             );
+
             throw error;
+
+        }
+
+        try {
+
+            const result =
+                await engine.execute(
+                    context,
+                    request,
+                );
+
+            this.logger?.debug(
+                "Engine execution completed.",
+                {
+                    engine:
+                        engineName,
+
+                    durationMs:
+                        Date.now() - startedAt,
+
+                },
+            );
+
+            return result;
+
+        }
+        catch (error) {
+
+            this.logger?.error(
+                "Engine execution failed.",
+                {
+                    engine:
+                        engineName,
+
+                    error:
+                        error instanceof Error
+                            ? error.message
+                            : String(error),
+                },
+            );
+
+            throw error;
+
         }
 
     }
@@ -53,7 +136,9 @@ export class EngineRuntime {
         engineName: string,
     ): Promise<boolean> {
 
-        return this.registry.exists(engineName);
+        return this.registry.exists(
+            engineName,
+        );
 
     }
 

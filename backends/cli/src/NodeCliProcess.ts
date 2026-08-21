@@ -11,101 +11,277 @@ implements CliProcess {
         command: CliCommand,
     ): Promise<CliResult> {
 
-        return new Promise((resolve, reject) => {
+        return new Promise(
+            (resolve, reject) => {
 
-            const child = spawn(
+                const startedAt =
+                    Date.now();
 
-                command.executable,
+                console.debug(
+                    "[CLI] process:start",
+                    {
+                        executable:
+                            command.executable,
 
-                [...command.arguments],
+                        arguments:
+                            [...command.arguments],
 
-                {
+                        workingDirectory:
+                            command.workingDirectory,
 
-                    cwd: command.workingDirectory,
-
-                    env: {
-
-                        ...process.env,
-
-                        ...command.environment,
-
+                        hasStandardInput:
+                            Boolean(
+                                command.standardInput,
+                            ),
                     },
-
-                    shell: false,
-
-                },
-
-            );
-
-            let standardOutput = "";
-
-            let standardError = "";
-
-            child.stdout.on(
-
-                "data",
-
-                data => {
-
-                    standardOutput += data.toString();
-
-                },
-
-            );
-
-            child.stderr.on(
-
-                "data",
-
-                data => {
-
-                    standardError += data.toString();
-
-                },
-
-            );
-
-            child.on(
-
-                "error",
-
-                reject,
-
-            );
-
-            child.on(
-
-                "close",
-
-                exitCode => {
-
-                    resolve({
-
-                        exitCode: exitCode ?? -1,
-
-                        standardOutput,
-
-                        standardError,
-
-                    });
-
-                },
-
-            );
-
-            if (command.standardInput) {
-
-                child.stdin.write(
-
-                    command.standardInput,
-
                 );
 
-            }
+                let child;
 
-            child.stdin.end();
+                try {
 
-        });
+                    child =
+                        spawn(
+
+                            command.executable,
+
+                            [...command.arguments],
+
+                            {
+
+                                cwd:
+                                    command.workingDirectory,
+
+                                env: {
+
+                                    ...process.env,
+
+                                    ...command.environment,
+
+                                },
+
+                                shell:
+                                    false,
+
+                            },
+
+                        );
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "[CLI] process:spawn-throw",
+                        {
+                            executable:
+                                command.executable,
+
+                            error:
+                                error instanceof Error
+                                    ? error.message
+                                    : String(error),
+
+                            durationMs:
+                                Date.now() -
+                                startedAt,
+                        },
+                    );
+
+                    reject(
+                        error,
+                    );
+
+                    return;
+
+                }
+
+                console.debug(
+                    "[CLI] process:spawned",
+                    {
+                        executable:
+                            command.executable,
+
+                        pid:
+                            child.pid,
+                    },
+                );
+
+                let standardOutput =
+                    "";
+
+                let standardError =
+                    "";
+
+                let settled =
+                    false;
+
+                child.stdout.on(
+                    "data",
+                    data => {
+
+                        const chunk =
+                            data.toString();
+
+                        standardOutput +=
+                            chunk;
+
+                    },
+                );
+
+                child.stderr.on(
+                    "data",
+                    data => {
+
+                        const chunk =
+                            data.toString();
+
+                        standardError +=
+                            chunk;
+
+                    },
+                );
+
+                child.on(
+                    "error",
+                    error => {
+
+                        if (settled) {
+
+                            return;
+
+                        }
+
+                        settled =
+                            true;
+
+                        console.error(
+                            "[CLI] process:error",
+                            {
+                                executable:
+                                    command.executable,
+
+                                pid:
+                                    child.pid,
+
+                                error:
+                                    error instanceof Error
+                                        ? error.message
+                                        : String(error),
+
+                                stdoutLength:
+                                    standardOutput.length,
+
+                                stderrLength:
+                                    standardError.length,
+
+                                durationMs:
+                                    Date.now() -
+                                    startedAt,
+                            },
+                        );
+
+                        reject(
+                            error,
+                        );
+
+                    },
+                );
+
+                child.on(
+                    "close",
+                    (
+                        exitCode,
+                        signal,
+                    ) => {
+
+                        if (settled) {
+
+                            return;
+
+                        }
+
+                        settled =
+                            true;
+
+                        console.debug(
+                            "[CLI] process:close",
+                            {
+                                executable:
+                                    command.executable,
+
+                                pid:
+                                    child.pid,
+
+                                exitCode,
+
+                                signal,
+
+                                stdoutLength:
+                                    standardOutput.length,
+
+                                stderrLength:
+                                    standardError.length,
+
+                                stdoutPreview:
+                                    standardOutput.slice(
+                                        0,
+                                        500,
+                                    ),
+
+                                stderrPreview:
+                                    standardError.slice(
+                                        0,
+                                        500,
+                                    ),
+
+                                durationMs:
+                                    Date.now() -
+                                    startedAt,
+                            },
+                        );
+
+                        resolve({
+
+                            exitCode:
+                                exitCode ?? -1,
+
+                            standardOutput,
+
+                            standardError,
+
+                        });
+
+                    },
+                );
+
+                if (
+                    command.standardInput
+                ) {
+
+                    console.debug(
+                        "[CLI] stdin:write",
+                        {
+                            executable:
+                                command.executable,
+
+                            pid:
+                                child.pid,
+
+                            length:
+                                command.standardInput.length,
+                        },
+                    );
+
+                    child.stdin.write(
+                        command.standardInput,
+                    );
+
+                }
+
+                child.stdin.end();
+
+            },
+        );
 
     }
 

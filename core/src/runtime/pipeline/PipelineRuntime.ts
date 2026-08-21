@@ -8,6 +8,7 @@ import {
 import {
     EventPublisher,
     Logger,
+    PlatformError,
 } from "@engineering/shared/foundation";
 
 import { PipelineRegistry } from "./PipelineRegistry.js";
@@ -22,34 +23,130 @@ export class PipelineRuntime {
     ) {}
 
     async execute(
-        pipelineName:string,
-        context:PipelineContext,
-        request:PipelineRequest,
+        pipelineName: string,
+        context: PipelineContext,
+        request: PipelineRequest,
 
     ): Promise<PipelineResult> {
-        this.logger?.debug("Pipeline execution started.",{pipeline:pipelineName,},);
-        const pipeline =
-            await this.registry.get(
-                pipelineName,
+
+        const startedAt =
+            Date.now();
+
+        this.logger?.debug(
+            "Pipeline execution started.",
+            {
+                pipeline:
+                    pipelineName,
+
+                executionId:
+                    context.executionId,
+            },
+        );
+
+        let pipeline;
+
+        try {
+
+            pipeline =
+                await this.registry.get(
+                    pipelineName,
+                );
+
+        }
+        catch (error) {
+
+            const platformError =
+                error instanceof PlatformError
+                    ? error
+                    : new PlatformError(
+                        "PIPELINE_RESOLUTION_FAILED",
+                        `Pipeline '${pipelineName}' could not be resolved.`,
+                        {
+                            component:
+                                "PipelineRuntime",
+
+                            details: {
+                                pipeline:
+                                    pipelineName,
+
+                                executionId:
+                                    context.executionId,
+                            },
+
+                            cause:
+                                error,
+                        },
+                    );
+
+            this.logger?.error(
+                "Pipeline resolution failed.",
+                {
+                    pipeline:
+                        pipelineName,
+
+                    executionId:
+                        context.executionId,
+
+                    code:
+                        platformError.code,
+
+                    error:
+                        platformError.message,
+                },
             );
 
-        if (!pipeline) {
-
-            throw new Error(
-                `Pipeline '${pipelineName}' is not registered.`,
-            );
+            throw platformError;
 
         }
 
-        const timestamp =
-            new Date();
+        if (!pipeline) {
+
+            const error =
+                new PlatformError(
+                    "PIPELINE_NOT_FOUND",
+                    `Pipeline '${pipelineName}' is not registered.`,
+                    {
+                        component:
+                            "PipelineRuntime",
+
+                        details: {
+                            pipeline:
+                                pipelineName,
+
+                            executionId:
+                                context.executionId,
+                        },
+                    },
+                );
+
+            this.logger?.error(
+                "Pipeline not found.",
+                {
+                    pipeline:
+                        pipelineName,
+
+                    executionId:
+                        context.executionId,
+
+                    code:
+                        error.code,
+
+                    error:
+                        error.message,
+                },
+            );
+
+            throw error;
+
+        }
 
         this.events?.publish({
 
             type:
                 "PIPELINE_STARTED",
 
-            timestamp,
+            timestamp:
+                new Date(),
 
             component:
                 "PipelineRuntime",
@@ -104,18 +201,71 @@ export class PipelineRuntime {
                 },
 
             });
-            this.logger?.debug("Pipeline execution completed.",{pipeline:pipelineName,},);
+
+            this.logger?.debug(
+                "Pipeline execution completed.",
+                {
+                    pipeline:
+                        pipelineName,
+
+                    executionId:
+                        context.executionId,
+
+                    durationMs:
+                        Date.now() -
+                        startedAt,
+                },
+            );
+
             return result;
 
         }
         catch (error) {
-            this.logger?.error("Pipeline execution failed.",
+
+            const platformError =
+                error instanceof PlatformError
+                    ? error
+                    : new PlatformError(
+                        "PIPELINE_EXECUTION_FAILED",
+                        `Pipeline '${pipelineName}' execution failed.`,
+                        {
+                            component:
+                                "PipelineRuntime",
+
+                            details: {
+                                pipeline:
+                                    pipelineName,
+
+                                executionId:
+                                    context.executionId,
+                            },
+
+                            cause:
+                                error,
+                        },
+                    );
+
+            this.logger?.error(
+                "Pipeline execution failed.",
                 {
-                    pipeline:pipelineName,
-                    executionId:context.executionId,
-                    error:error instanceof Error? error.message: String(error),
+                    pipeline:
+                        pipelineName,
+
+                    executionId:
+                        context.executionId,
+
+                    code:
+                        platformError.code,
+
+                    error:
+                        platformError.message,
+
+                    durationMs:
+                        Date.now() -
+                        startedAt,
                 },
             );
+
             this.events?.publish({
 
                 type:
@@ -140,15 +290,13 @@ export class PipelineRuntime {
                         pipelineName,
 
                     error:
-                        error instanceof Error
-                            ? error.message
-                            : String(error),
+                        platformError.message,
 
                 },
 
             });
 
-            throw error;
+            throw platformError;
 
         }
 
