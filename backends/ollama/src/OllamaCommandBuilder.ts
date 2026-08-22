@@ -5,14 +5,19 @@ import {
     BackendTask,
 } from "@engineering/backend-shared";
 
-import { CliCommand } from "@engineering/backend-cli";
+import {
+    CliCommand,
+} from "@engineering/backend-cli";
 
-import { OpenCodeConfiguration } from "./OpenCodeConfiguration.js";
+import {
+    OllamaConfiguration,
+} from "./OllamaConfiguration.js";
 
-export class OpenCodeCommandBuilder {
+export class OllamaCommandBuilder {
 
     constructor(
-        private readonly configuration: OpenCodeConfiguration,
+        private readonly configuration:
+            OllamaConfiguration,
     ) {}
 
     build(
@@ -21,8 +26,22 @@ export class OpenCodeCommandBuilder {
         model?: string,
     ): CliCommand {
 
+        const selectedModel =
+            model ??
+            this.configuration.model;
+
+        if (!selectedModel) {
+
+            throw new Error(
+                "Ollama model is required.",
+            );
+
+        }
+
         const prompt =
-            this.buildPrompt(task);
+            this.buildPrompt(
+                task,
+            );
 
         const argumentsList: string[] = [
 
@@ -30,20 +49,11 @@ export class OpenCodeCommandBuilder {
 
             "run",
 
-        ];
+            selectedModel,
 
-        if (model) {
-
-            argumentsList.push(
-                "--model",
-                model,
-            );
-
-        }
-
-        argumentsList.push(
             prompt,
-        );
+
+        ];
 
         const fileInputs =
             this.findFileInputs(
@@ -56,25 +66,7 @@ export class OpenCodeCommandBuilder {
         ) {
 
             argumentsList.push(
-                "--file",
                 fileInput.path,
-            );
-
-        }
-
-        const format =
-            this.configuration.format ?? "json";
-
-        argumentsList.push(
-            "--format",
-            format,
-        );
-
-        if (configuration?.workingDirectory) {
-
-            argumentsList.push(
-                "--dir",
-                configuration.workingDirectory,
             );
 
         }
@@ -109,12 +101,16 @@ export class OpenCodeCommandBuilder {
         inputs: readonly BackendInput[],
     ): readonly Extract<
         BackendInputSource,
-        { readonly kind: "FILE" }
+        {
+            readonly kind: "FILE";
+        }
     >[] {
 
         const sources: Extract<
             BackendInputSource,
-            { readonly kind: "FILE" }
+            {
+                readonly kind: "FILE";
+            }
         >[] = [];
 
         for (
@@ -150,7 +146,9 @@ export class OpenCodeCommandBuilder {
 
         lines.push("");
 
-        if (task.instructions.length > 0) {
+        if (
+            task.instructions.length > 0
+        ) {
 
             lines.push(
                 "Instructions:",
@@ -171,7 +169,9 @@ export class OpenCodeCommandBuilder {
 
         }
 
-        if (task.inputs.length > 0) {
+        if (
+            task.inputs.length > 0
+        ) {
 
             lines.push(
                 "Inputs:",
@@ -190,14 +190,12 @@ export class OpenCodeCommandBuilder {
                     input.source.kind === "CONTENT"
                 ) {
 
-                    lines.push("");
-
                     lines.push(
+                        "",
                         "Content:",
-                    );
-
-                    lines.push(
-                        String(input.source.content),
+                        String(
+                            input.source.content,
+                        ),
                     );
 
                 }
@@ -231,7 +229,9 @@ export class OpenCodeCommandBuilder {
 
         }
 
-        return lines.join("\n");
+        return lines.join(
+            "\n",
+        );
 
     }
 

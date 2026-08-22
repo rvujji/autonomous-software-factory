@@ -33,9 +33,24 @@ implements Backend {
 
         ];
 
+    receivedModel:
+        string | undefined;
+
     async execute(
         task: BackendTask,
+        configuration?: {
+            readonly timeoutMs?: number;
+            readonly workingDirectory?: string;
+            readonly environment?: Readonly<Record<string, string>>;
+            readonly retryCount?: number;
+            readonly stream?: boolean;
+            readonly approvalRequired?: boolean;
+        },
+        model?: string,
     ): Promise<BackendResult> {
+
+        this.receivedModel =
+            model;
 
         return {
 
@@ -169,7 +184,85 @@ describe(
                 );
 
             },
+        );
 
+        it(
+            "propagates the execution candidate model to the backend",
+            async () => {
+
+                const registry =
+                    new InMemoryBackendRegistry();
+
+                const runtime =
+                    new BackendRuntime(
+                        registry,
+                    );
+
+                const backend =
+                    new E2EBackend();
+
+                await runtime.register(
+                    backend,
+                );
+
+                const task: BackendTask = {
+
+                    contractVersion:
+                        "1.0",
+
+                    id:
+                        "backend-model-selection-e2e",
+
+                    name:
+                        "Backend Model Selection E2E",
+
+                    objective:
+                        "Verify model selection propagation.",
+
+                    instructions: [],
+
+                    inputs: [],
+
+                    context: [],
+
+                    expectedOutputs: [],
+
+                    metadata: {},
+
+                };
+
+                const result =
+                    await runtime.executeCandidates(
+                        [
+
+                            {
+
+                                backend:
+                                    "e2e-backend",
+
+                                model:
+                                    "test/model-a",
+
+                            },
+
+                        ],
+
+                        task,
+                    );
+
+                expect(
+                    result.status,
+                ).toBe(
+                    BackendStatus.SUCCEEDED,
+                );
+
+                expect(
+                    backend.receivedModel,
+                ).toBe(
+                    "test/model-a",
+                );
+
+            },
         );
 
     },

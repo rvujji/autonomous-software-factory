@@ -9,11 +9,13 @@ export interface Backend {
 
     readonly version: string;
 
-    readonly capabilities: readonly BackendCapability[];
+    readonly capabilities:
+        readonly BackendCapability[];
 
     execute(
         task: BackendTask,
-        configuration?: BackendConfiguration
+        configuration?: BackendConfiguration,
+        model?: string,
     ): Promise<BackendResult>;
 
 }

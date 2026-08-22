@@ -45,6 +45,15 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
+  backends/ollama:
+    dependencies:
+      '@engineering/backend-cli':
+        specifier: workspace:*
+        version: link:../cli
+      '@engineering/backend-shared':
+        specifier: workspace:*
+        version: link:../shared
+
   backends/opencode:
     dependencies:
       '@engineering/backend-cli':

@@ -65,7 +65,7 @@ export class OpenCodeResultMapper {
                     stdout:
                         result.standardOutput.slice(
                             0,
-                            2000,
+                            4000,
                         ),
 
                     stderr:
@@ -139,35 +139,9 @@ export class OpenCodeResultMapper {
                 result.standardOutput,
             );
 
-        const eventSummary =
-            events.map(
-                (event, index) => ({
-
-                    index,
-
-                    type:
-                        event.type,
-
-                    partType:
-                        event.part?.type,
-
-                    textLength:
-                        typeof event.part?.text === "string"
-                            ? event.part.text.length
-                            : 0,
-
-                    reason:
-                        event.part?.reason,
-
-                    tokens:
-                        event.part?.tokens,
-
-                }),
-            );
-
-        console.debug(
-            "[OPENCODE] result:event-summary",
-            eventSummary,
+        this.logEventDiagnostics(
+            executionId,
+            events,
         );
 
         const text =
@@ -200,105 +174,11 @@ export class OpenCodeResultMapper {
             !text.trim()
         ) {
 
-            const finishEvents =
-                events.filter(
-                    event =>
-                        event.type === "step_finish",
-                );
-
-            const finishReasons =
-                finishEvents.map(
-                    event =>
-                        event.part?.reason ??
-                        "unknown",
-                );
-
-            const tokenSummaries =
-                finishEvents.map(
-                    event =>
-                        event.part?.tokens,
-                );
-
-            console.error(
-                "[OPENCODE] result:no-text-output",
-                {
-                    executionId,
-
-                    exitCode:
-                        result.exitCode,
-
-                    eventCount:
-                        events.length,
-
-                    finishEventCount:
-                        finishEvents.length,
-
-                    finishReasons,
-
-                    tokenSummaries,
-
-                    stdout:
-                        result.standardOutput.slice(
-                            0,
-                            4000,
-                        ),
-
-                    stderr:
-                        result.standardError.slice(
-                            0,
-                            4000,
-                        ),
-                },
-            );
-
-            return {
-
-                contractVersion:
-                    "1.0",
-
+            return this.createEmptyOutputResult(
                 executionId,
-
-                status:
-                    BackendStatus.FAILED,
-
-                outputs: [],
-
-                logs: [],
-
-                toolCalls: [],
-
-                toolResults: [],
-
-                error: {
-
-                    code:
-                        "OPENCODE_EMPTY_OUTPUT",
-
-                    message:
-                        this.buildEmptyOutputMessage(
-                            finishReasons,
-                        ),
-
-                    cause: {
-
-                        stdout:
-                            result.standardOutput,
-
-                        stderr:
-                            result.standardError,
-
-                        eventCount:
-                            events.length,
-
-                        finishReasons,
-
-                        tokenSummaries,
-
-                    },
-
-                },
-
-            };
+                result,
+                events,
+            );
 
         }
 
@@ -435,20 +315,264 @@ export class OpenCodeResultMapper {
         events: readonly OpenCodeEvent[],
     ): string {
 
-        return events
+        const textParts: string[] = [];
 
-            .filter(
+        for (
+            const event
+            of events
+        ) {
+
+            if (
+                typeof event.part?.text === "string" &&
+                event.part.text.trim()
+            ) {
+
+                textParts.push(
+                    event.part.text,
+                );
+
+                continue;
+
+            }
+
+            if (
+                event.type === "text" &&
+                typeof event.part?.text === "string"
+            ) {
+
+                textParts.push(
+                    event.part.text,
+                );
+
+            }
+
+        }
+
+        return textParts.join("");
+
+    }
+
+    private logEventDiagnostics(
+        executionId: string,
+        events: readonly OpenCodeEvent[],
+    ): void {
+
+        const eventSummary =
+            events.map(
+                (event, index) => ({
+
+                    index,
+
+                    type:
+                        event.type,
+
+                    topLevelKeys:
+                        Object.keys(
+                            event,
+                        ),
+
+                    partType:
+                        event.part?.type,
+
+                    partKeys:
+                        event.part
+                            ? Object.keys(
+                                event.part,
+                            )
+                            : [],
+
+                    textLength:
+                        typeof event.part?.text === "string"
+                            ? event.part.text.length
+                            : 0,
+
+                    reason:
+                        event.part?.reason,
+
+                    tokens:
+                        event.part?.tokens,
+
+                }),
+            );
+
+        console.debug(
+            "[OPENCODE] result:event-summary",
+            eventSummary,
+        );
+
+        const finishEvents =
+            events.filter(
                 event =>
-                    event.type === "text" &&
-                    event.part?.type === "text",
-            )
+                    event.type === "step_finish",
+            );
 
-            .map(
+        const finishReasons =
+            finishEvents.map(
                 event =>
-                    event.part?.text ?? "",
-            )
+                    event.part?.reason ??
+                    "unknown",
+            );
 
-            .join("");
+        const tokenSummaries =
+            finishEvents.map(
+                event =>
+                    event.part?.tokens,
+            );
+
+        console.debug(
+            "[OPENCODE] result:execution-summary",
+            {
+                executionId,
+
+                eventCount:
+                    events.length,
+
+                finishEventCount:
+                    finishEvents.length,
+
+                finishReasons,
+
+                tokenSummaries,
+            },
+        );
+
+    }
+
+    private createEmptyOutputResult(
+        executionId: string,
+        result: CliResult,
+        events: readonly OpenCodeEvent[],
+    ): BackendResult {
+
+        const finishEvents =
+            events.filter(
+                event =>
+                    event.type === "step_finish",
+            );
+
+        const finishReasons =
+            finishEvents.map(
+                event =>
+                    event.part?.reason ??
+                    "unknown",
+            );
+
+        const tokenSummaries =
+            finishEvents.map(
+                event =>
+                    event.part?.tokens,
+            );
+
+        console.error(
+            "[OPENCODE] result:no-text-output",
+            {
+                executionId,
+
+                exitCode:
+                    result.exitCode,
+
+                eventCount:
+                    events.length,
+
+                finishEventCount:
+                    finishEvents.length,
+
+                finishReasons,
+
+                tokenSummaries,
+
+                eventTypes:
+                    events.map(
+                        event =>
+                            event.type,
+                    ),
+
+                eventKeys:
+                    events.map(
+                        event =>
+                            Object.keys(
+                                event,
+                            ),
+                    ),
+
+                partKeys:
+                    events.map(
+                        event =>
+                            event.part
+                                ? Object.keys(
+                                    event.part,
+                                )
+                                : [],
+                    ),
+
+                stdout:
+                    result.standardOutput.slice(
+                        0,
+                        8000,
+                    ),
+
+                stderr:
+                    result.standardError.slice(
+                        0,
+                        8000,
+                    ),
+            },
+        );
+
+        return {
+
+            contractVersion:
+                "1.0",
+
+            executionId,
+
+            status:
+                BackendStatus.FAILED,
+
+            outputs: [],
+
+            logs: [],
+
+            toolCalls: [],
+
+            toolResults: [],
+
+            error: {
+
+                code:
+                    "OPENCODE_EMPTY_OUTPUT",
+
+                message:
+                    this.buildEmptyOutputMessage(
+                        finishReasons,
+                    ),
+
+                cause: {
+
+                    stdout:
+                        result.standardOutput,
+
+                    stderr:
+                        result.standardError,
+
+                    eventCount:
+                        events.length,
+
+                    eventTypes:
+                        events.map(
+                            event =>
+                                event.type,
+                        ),
+
+                    finishReasons,
+
+                    tokenSummaries,
+
+                },
+
+            },
+
+        };
 
     }
 

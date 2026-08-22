@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 import { CliCommand } from "./CliCommand.js";
 import { CliProcess } from "./CliProcess.js";
@@ -17,23 +18,127 @@ implements CliProcess {
                 const startedAt =
                     Date.now();
 
+                const environment = {
+
+                    ...process.env,
+
+                    ...command.environment,
+
+                };
+
+                let resolvedExecutable:
+                    string | undefined;
+
+                try {
+
+                    resolvedExecutable =
+                        execFileSync(
+                            "which",
+                            [command.executable],
+                            {
+                                encoding:
+                                    "utf8",
+
+                                env:
+                                    environment,
+                            },
+                        ).trim();
+
+                }
+                catch {
+                    resolvedExecutable =
+                        undefined;
+                }
+
                 console.log(
                     "[CLI] process:start",
                     {
                         executable:
                             command.executable,
 
-                        arguments:
-                            [...command.arguments],
+                        resolvedExecutable,
+
+                        argumentCount:
+                            command.arguments.length,
+
+                        argumentLengths:
+                            command.arguments.map(
+                                argument =>
+                                    argument.length,
+                            ),
+
+                        totalArgumentChars:
+                            command.arguments.reduce(
+                                (
+                                    total,
+                                    argument,
+                                ) =>
+                                    total +
+                                    argument.length,
+                                0,
+                            ),
 
                         workingDirectory:
                             command.workingDirectory,
+
+                        hasEnvironmentOverrides:
+                            Boolean(
+                                command.environment &&
+                                Object.keys(
+                                    command.environment,
+                                ).length > 0,
+                            ),
 
                         hasStandardInput:
                             Boolean(
                                 command.standardInput,
                             ),
+
+                        environment: {
+
+                            PATH:
+                                environment.PATH,
+
+                            HOME:
+                                environment.HOME,
+
+                            PWD:
+                                environment.PWD,
+
+                            SHELL:
+                                environment.SHELL,
+
+                        },
+
                     },
+                );
+
+                console.log(
+                    "[CLI] process:argument-summary",
+                    command.arguments.map(
+                        (
+                            argument,
+                            index,
+                        ) => ({
+
+                            index,
+
+                            length:
+                                argument.length,
+
+                            preview:
+                                argument.slice(
+                                    0,
+                                    120,
+                                ),
+
+                            tail:
+                                argument.slice(
+                                    -120,
+                                ),
+
+                        }),
+                    ),
                 );
 
                 let child;
@@ -52,13 +157,8 @@ implements CliProcess {
                                 cwd:
                                     command.workingDirectory,
 
-                                env: {
-
-                                    ...process.env,
-
-                                    ...command.environment,
-
-                                },
+                                env:
+                                    environment,
 
                                 shell:
                                     false,
@@ -100,6 +200,8 @@ implements CliProcess {
                     {
                         executable:
                             command.executable,
+
+                        resolvedExecutable,
 
                         pid:
                             child.pid,

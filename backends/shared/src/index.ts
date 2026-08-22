@@ -16,3 +16,4 @@ export * from "./SkillReference.js";
 export * from "./TemplateReference.js";
 export * from "./ToolCall.js";
 export * from "./ToolResult.js";
+export * from "./BackendExecutionCandidate.js";

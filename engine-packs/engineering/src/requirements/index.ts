@@ -8,3 +8,4 @@ export * from "./ExtractKnowledgeEngine.js";
 export * from "./SynthesizeKnowledgeEngine.js";
 export * from "./RefineRequirementsEngine.js";
 export * from "./ValidateRequirementSetEngine.js";
+export * from "./RequirementsExecutionPolicy.js";

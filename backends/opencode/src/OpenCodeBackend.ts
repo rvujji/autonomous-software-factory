@@ -19,9 +19,11 @@ import { OpenCodeResultMapper } from "./OpenCodeResultMapper.js";
 export class OpenCodeBackend
 extends CliBackend {
 
-    readonly name = "OpenCode";
+    readonly name =
+        "OpenCode";
 
-    readonly version = "1.0.0";
+    readonly version =
+        "1.0.0";
 
     readonly capabilities:
         readonly BackendCapability[] = [
@@ -71,6 +73,23 @@ extends CliBackend {
 
     ): Promise<BackendResult> {
 
+        const model =
+            configuration?.model;
+
+        console.log(
+            "[OPENCODE] execution:start",
+            {
+                task:
+                    task.name,
+
+                taskId:
+                    task.id,
+
+                model:
+                    model ?? "default",
+            },
+        );
+
         console.debug(
             "[OPENCODE] execute:start",
             {
@@ -80,16 +99,23 @@ extends CliBackend {
                 taskId:
                     task.id,
 
+                model:
+                    model ?? "default",
+
                 inputCount:
                     task.inputs.length,
 
                 promptInputChars:
                     task.inputs
                         .reduce(
-                            (total, input) => {
+                            (
+                                total,
+                                input,
+                            ) => {
 
                                 if (
-                                    input.source.kind !== "CONTENT"
+                                    input.source.kind !==
+                                    "CONTENT"
                                 ) {
 
                                     return total;
@@ -106,42 +132,60 @@ extends CliBackend {
                         ),
             },
         );
+
         const command =
             this.commandBuilder.build(
                 task,
                 configuration,
+                model,
             );
+
         console.debug(
             "[OPENCODE] command:built",
-            {
-                task: task.name,
-                executable: command.executable,
-                arguments: command.arguments,
-                workingDirectory: command.workingDirectory,
-            },
-        );
-        console.debug("[OPENCODE] command:json",JSON.stringify(command),);
-        const startedAt = Date.now();
-        const result =
-            await this.process.execute(
-                command,
-            );
-        console.debug(
-            "[OPENCODE] process:completed",
-            {
-                task: task.name,
-                taskId: task.id,
-                durationMs: Date.now() - startedAt,
-            },
-        );
-        console.debug(
-            "[OPENCODE] execute:process-returned",
             {
                 task:
                     task.name,
 
                 taskId:
                     task.id,
+
+                model:
+                    model ?? "default",
+
+                executable:
+                    command.executable,
+
+                arguments:
+                    command.arguments,
+
+                workingDirectory:
+                    command.workingDirectory,
+            },
+        );
+
+        const startedAt =
+            Date.now();
+
+        const result =
+            await this.process.execute(
+                command,
+            );
+
+        console.debug(
+            "[OPENCODE] process:completed",
+            {
+                task:
+                    task.name,
+
+                taskId:
+                    task.id,
+
+                model:
+                    model ?? "default",
+
+                durationMs:
+                    Date.now() -
+                    startedAt,
 
                 exitCode:
                     result.exitCode,
@@ -153,13 +197,34 @@ extends CliBackend {
                     result.standardError.length,
             },
         );
-        return this.resultMapper.map(
 
-            randomUUID(),
+        const mapped =
+            this.resultMapper.map(
+                randomUUID(),
+                result,
+            );
 
-            result,
+        console.log(
+            "[OPENCODE] execution:done",
+            {
+                task:
+                    task.name,
 
+                taskId:
+                    task.id,
+
+                model:
+                    model ?? "default",
+
+                status:
+                    mapped.status,
+
+                error:
+                    mapped.error?.message,
+            },
         );
+
+        return mapped;
 
     }
 

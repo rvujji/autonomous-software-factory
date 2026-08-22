@@ -64,6 +64,11 @@ implements Pipeline {
                     "engineering.validate-requirement-set",
             },
 
+            {
+                engine:
+                    "engineering.generate-requirements-document",
+            },
+
         ],
 
     };
@@ -119,10 +124,18 @@ implements Pipeline {
 
             );
 
-        artifacts =
+        const findingsArtifacts =
             await this.persistArtifacts(
                 findingsResult.output.artifacts ?? [],
             );
+
+        artifacts = [
+
+            ...artifacts,
+
+            ...findingsArtifacts,
+
+        ];
 
         console.log(
             "[REFINEMENT] knowledge:extract:done",
@@ -143,7 +156,8 @@ implements Pipeline {
 
                     input: {
 
-                        artifacts,
+                        artifacts:
+                            findingsArtifacts,
 
                     },
 
@@ -187,7 +201,9 @@ implements Pipeline {
 
                             ...request.artifacts,
 
-                            ...artifacts,
+                            ...findingsArtifacts,
+
+                            ...synthesisArtifacts,
 
                         ],
 
@@ -253,6 +269,67 @@ implements Pipeline {
 
         console.log(
             "[REFINEMENT] requirements:validate:done",
+        );
+
+        const validatedRequirementSet =
+            validatedArtifacts.find(
+                artifact =>
+                    artifact.type ===
+                    "VALIDATED_REQUIREMENT_SET",
+            );
+
+        if (
+            !validatedRequirementSet
+        ) {
+
+            throw new Error(
+                "Requirements validation did not produce a VALIDATED_REQUIREMENT_SET artifact.",
+            );
+
+        }
+
+        console.log(
+            "[REFINEMENT] requirements:document:start",
+        );
+
+        const documentResult =
+            await this.engines.execute(
+
+                "engineering.generate-requirements-document",
+
+                context,
+
+                {
+
+                    input: {
+
+                        artifacts: [
+
+                            validatedRequirementSet,
+
+                        ],
+
+                    },
+
+                },
+
+            );
+
+        const documentArtifacts =
+            await this.persistArtifacts(
+                documentResult.output.artifacts ?? [],
+            );
+
+        artifacts = [
+
+            ...artifacts,
+
+            ...documentArtifacts,
+
+        ];
+
+        console.log(
+            "[REFINEMENT] requirements:document:done",
         );
 
         return {
