@@ -20,7 +20,8 @@
     "./engine": "./dist/runtime/engine/index.js",
     "./execution": "./dist/runtime/execution/index.js",
     "./foundation": "./dist/runtime/foundation/index.js",
-    "./pipeline": "./dist/runtime/pipeline/index.js"
+    "./pipeline": "./dist/runtime/pipeline/index.js",
+    "./factory": "./dist/runtime/factory/index.js"
   },
 
   "scripts": {

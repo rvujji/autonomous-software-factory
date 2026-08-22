@@ -18,13 +18,11 @@
     ],
 
     "references": [
-
         { "path": "../shared" },
-
         { "path": "../core" },
-
-        { "path": "../engine-packs/engineering" }
-        
+        { "path": "../engine-packs/engineering" },
+        { "path": "../backends/cli" },
+        { "path": "../backends/opencode" }
     ]
 
 }

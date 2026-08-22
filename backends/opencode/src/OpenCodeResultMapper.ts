@@ -15,7 +15,15 @@ interface OpenCodeEvent {
 
         readonly text?: string;
 
+        readonly reason?: string;
+
+        readonly tokens?: unknown;
+
+        readonly [key: string]: unknown;
+
     };
+
+    readonly [key: string]: unknown;
 
 }
 
@@ -57,13 +65,13 @@ export class OpenCodeResultMapper {
                     stdout:
                         result.standardOutput.slice(
                             0,
-                            1000,
+                            2000,
                         ),
 
                     stderr:
                         result.standardError.slice(
                             0,
-                            2000,
+                            4000,
                         ),
                 },
             );
@@ -131,14 +139,35 @@ export class OpenCodeResultMapper {
                 result.standardOutput,
             );
 
-        console.debug(
-            "[OPENCODE] result:events-parsed",
-            {
-                executionId,
+        const eventSummary =
+            events.map(
+                (event, index) => ({
 
-                eventCount:
-                    events.length,
-            },
+                    index,
+
+                    type:
+                        event.type,
+
+                    partType:
+                        event.part?.type,
+
+                    textLength:
+                        typeof event.part?.text === "string"
+                            ? event.part.text.length
+                            : 0,
+
+                    reason:
+                        event.part?.reason,
+
+                    tokens:
+                        event.part?.tokens,
+
+                }),
+            );
+
+        console.debug(
+            "[OPENCODE] result:event-summary",
+            eventSummary,
         );
 
         const text =
@@ -171,25 +200,54 @@ export class OpenCodeResultMapper {
             !text.trim()
         ) {
 
+            const finishEvents =
+                events.filter(
+                    event =>
+                        event.type === "step_finish",
+                );
+
+            const finishReasons =
+                finishEvents.map(
+                    event =>
+                        event.part?.reason ??
+                        "unknown",
+                );
+
+            const tokenSummaries =
+                finishEvents.map(
+                    event =>
+                        event.part?.tokens,
+                );
+
             console.error(
                 "[OPENCODE] result:no-text-output",
                 {
                     executionId,
 
+                    exitCode:
+                        result.exitCode,
+
+                    eventCount:
+                        events.length,
+
+                    finishEventCount:
+                        finishEvents.length,
+
+                    finishReasons,
+
+                    tokenSummaries,
+
                     stdout:
                         result.standardOutput.slice(
                             0,
-                            2000,
+                            4000,
                         ),
 
                     stderr:
                         result.standardError.slice(
                             0,
-                            2000,
+                            4000,
                         ),
-
-                    eventCount:
-                        events.length,
                 },
             );
 
@@ -217,7 +275,9 @@ export class OpenCodeResultMapper {
                         "OPENCODE_EMPTY_OUTPUT",
 
                     message:
-                        "OpenCode completed successfully but produced no text output.",
+                        this.buildEmptyOutputMessage(
+                            finishReasons,
+                        ),
 
                     cause: {
 
@@ -226,6 +286,13 @@ export class OpenCodeResultMapper {
 
                         stderr:
                             result.standardError,
+
+                        eventCount:
+                            events.length,
+
+                        finishReasons,
+
+                        tokenSummaries,
 
                     },
 
@@ -382,6 +449,29 @@ export class OpenCodeResultMapper {
             )
 
             .join("");
+
+    }
+
+    private buildEmptyOutputMessage(
+        finishReasons: readonly string[],
+    ): string {
+
+        if (
+            finishReasons.length === 0
+        ) {
+
+            return (
+                "OpenCode completed successfully " +
+                "but produced no text output and no step_finish event."
+            );
+
+        }
+
+        return (
+            "OpenCode completed successfully " +
+            "but produced no text output. " +
+            `Finish reason: ${finishReasons.join(", ")}.`
+        );
 
     }
 

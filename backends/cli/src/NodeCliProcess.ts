@@ -17,7 +17,7 @@ implements CliProcess {
                 const startedAt =
                     Date.now();
 
-                console.debug(
+                console.log(
                     "[CLI] process:start",
                     {
                         executable:
@@ -95,7 +95,7 @@ implements CliProcess {
 
                 }
 
-                console.debug(
+                console.log(
                     "[CLI] process:spawned",
                     {
                         executable:
@@ -203,7 +203,7 @@ implements CliProcess {
                         settled =
                             true;
 
-                        console.debug(
+                        console.log(
                             "[CLI] process:close",
                             {
                                 executable:
@@ -258,7 +258,7 @@ implements CliProcess {
                     command.standardInput
                 ) {
 
-                    console.debug(
+                    console.log(
                         "[CLI] stdin:write",
                         {
                             executable:

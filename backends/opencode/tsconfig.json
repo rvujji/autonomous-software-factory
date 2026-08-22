@@ -15,6 +15,7 @@
   ],
 
   "references": [
-    { "path": "../shared" }
+    { "path": "../shared" },
+    { "path": "../cli" }
   ]
 }

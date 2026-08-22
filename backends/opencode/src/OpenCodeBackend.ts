@@ -71,17 +71,88 @@ extends CliBackend {
 
     ): Promise<BackendResult> {
 
+        console.debug(
+            "[OPENCODE] execute:start",
+            {
+                task:
+                    task.name,
+
+                taskId:
+                    task.id,
+
+                inputCount:
+                    task.inputs.length,
+
+                promptInputChars:
+                    task.inputs
+                        .reduce(
+                            (total, input) => {
+
+                                if (
+                                    input.source.kind !== "CONTENT"
+                                ) {
+
+                                    return total;
+
+                                }
+
+                                return total +
+                                    String(
+                                        input.source.content,
+                                    ).length;
+
+                            },
+                            0,
+                        ),
+            },
+        );
         const command =
             this.commandBuilder.build(
                 task,
                 configuration,
             );
-
+        console.debug(
+            "[OPENCODE] command:built",
+            {
+                task: task.name,
+                executable: command.executable,
+                arguments: command.arguments,
+                workingDirectory: command.workingDirectory,
+            },
+        );
+        console.debug("[OPENCODE] command:json",JSON.stringify(command),);
+        const startedAt = Date.now();
         const result =
             await this.process.execute(
                 command,
             );
+        console.debug(
+            "[OPENCODE] process:completed",
+            {
+                task: task.name,
+                taskId: task.id,
+                durationMs: Date.now() - startedAt,
+            },
+        );
+        console.debug(
+            "[OPENCODE] execute:process-returned",
+            {
+                task:
+                    task.name,
 
+                taskId:
+                    task.id,
+
+                exitCode:
+                    result.exitCode,
+
+                stdoutLength:
+                    result.standardOutput.length,
+
+                stderrLength:
+                    result.standardError.length,
+            },
+        );
         return this.resultMapper.map(
 
             randomUUID(),

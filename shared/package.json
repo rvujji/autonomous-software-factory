@@ -57,6 +57,16 @@
     "./graph": {
       "types": "./dist/graph/index.d.ts",
       "default": "./dist/graph/index.js"
+    },
+
+    "./factory": {
+      "types": "./dist/factory/index.d.ts",
+      "default": "./dist/factory/index.js"
+    },
+
+    "./work": {
+      "types": "./dist/work/index.d.ts",
+      "default": "./dist/work/index.js"
     }
 
   },

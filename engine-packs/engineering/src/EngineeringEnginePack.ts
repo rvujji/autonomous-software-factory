@@ -42,6 +42,9 @@ import {
 import {
     RequirementsRefinementPipeline,
 } from "./pipeline/RequirementsRefinementPipeline.js";
+import {
+    WorkDiscoveryEngine,
+} from "./work/index.js";
 
 export class EngineeringEnginePack
 implements EnginePack {
@@ -110,6 +113,8 @@ implements EnginePack {
             ),
 
             new ValidateRequirementSetEngine(),
+
+            new WorkDiscoveryEngine(),
 
         ];
 

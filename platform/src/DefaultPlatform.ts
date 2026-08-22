@@ -53,6 +53,9 @@ import {
 import {
     Platform,
 } from "./Platform.js";
+import {
+    AutonomousProjectFactory,
+} from "@engineering/core/factory";
 
 export class DefaultPlatform
 implements Platform {
@@ -71,6 +74,9 @@ implements Platform {
 
     readonly executions:
         ExecutionRuntime;
+
+    readonly factory:
+        AutonomousProjectFactory;
         
 
     private constructor(
@@ -90,6 +96,9 @@ implements Platform {
         executions:
             ExecutionRuntime,
 
+        factory:
+            AutonomousProjectFactory,
+
     ) {
 
         this.artifacts =
@@ -106,6 +115,9 @@ implements Platform {
 
         this.executions =
             executions;
+
+        this.factory =
+            factory;
 
     }
 
@@ -316,6 +328,21 @@ implements Platform {
                 logger,
             );
 
+        const factory =
+            new AutonomousProjectFactory(
+
+                engineRuntime,
+
+                artifactRuntime,
+
+                pipelineRuntime,
+
+                {
+                    logger,
+                },
+
+            );
+
         return new DefaultPlatform(
 
             artifactRuntime,
@@ -327,6 +354,8 @@ implements Platform {
             pipelineRuntime,
 
             executionRuntime,
+
+            factory,
 
         );
 
